@@ -1,6 +1,6 @@
 # Exploring Composition Patterns with Algorithms and Data Structures
 
-## Design Patterns
+## Building Blocks
 
 ### Functions
 
@@ -232,10 +232,104 @@ const drinkCounter = newer(counter);
 **/
 ```
 
-### ES5 Prototypal Classes
+### Classes
 
-What properties are available to my class?
+```
+// ES5
 
-for...in iterates over all the numerable properties of an object, including those in the prototype chain.
+function Barista(){
+	this.menu = [{name: "americano", price: {small: 2.99, medium: 3.20}}, {name: "drip", price: {small: 1.99, medium: 2.30}}, {name: "pour-over", price: {small: 3.20, medium: 3.50}}];
+	this.customer = '';
+	this.selectedItem = '';
+	this.size = '';
+	this.quantity = 0;
+	this.taxes = .0575;
+	this.total = 0;
+}
 
-### ES6 Syntactic Prototypal Classes
+Barista.prototype.order = function(customer, quantity, size, selectedItem){
+	this.customer = customer;
+	this.quantity = quantity;
+	this.size = size;
+	this.selectedItem = selectedItem;
+	this.setTotal();
+}
+
+Barista.prototype.setTotal = function(){
+	const selectedItemPrice = this.menu.filter(item => item.name === this.selectedItem)[0].price[this.size];
+	const subtotal = selectedItemPrice * this.quantity;
+	this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
+	this.printReceipt();
+}
+
+Barista.prototype.printReceipt = function(){
+	console.log(`Your total is: $${this.total}. Please wait for your name to be called.`);
+	this.serve();
+}
+
+Barista.prototype.serve = function(){
+	setTimeout(this.callCustomer.bind(this), 3000);
+}
+
+Barista.prototype.callCustomer = function(){
+	console.log(`Here's ${this.quantity} ${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem} for a ${this.customer}!`);
+}
+
+
+/**
+*
+* const myBarista = new Barista();
+* myBarista.order('Phil', 1, 'small', 'americano');
+* Your total is: $3.16. Please wait for your name to be called.
+* Here's 1 americano for a Phil!
+*
+* myBarista.order('Phil', 3, 'medium', 'drip');
+* Your total is: $7.30. Please wait for your name to be called.
+* Here's 3 drips for a Phil!
+**/
+
+
+
+// ES6 with "Syntactic Sugar"
+
+class Barista {
+	constructor(){
+	this.menu = [{name: "americano", price: {small: 2.99, medium: 3.20}}, {name: "drip", price: {small: 1.99, medium: 2.30}}, {name: "pour-over", price: {small: 3.20, medium: 3.50}}];
+	this.customer = '';
+	this.selectedItem = '';
+	this.size = '';
+	this.quantity = 0;
+	this.taxes = .0575;
+	this.total = 0;
+	}
+
+order(customer, quantity, size, selectedItem){
+	this.customer = customer;
+	this.quantity = quantity;
+	this.size = size;
+	this.selectedItem = selectedItem;
+	this.setTotal();
+}
+
+setTotal(){
+	const selectedItemPrice = this.menu.filter(item => item.name === this.selectedItem)[0].price[this.size];
+	const subtotal = selectedItemPrice * this.quantity;
+	this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
+	this.printReceipt();
+}
+
+printReceipt(){
+	console.log(`Your total is: $${this.total}. Please wait for your name to be called.`);
+	this.serve();
+}
+
+serve(){
+	setTimeout(this.callCustomer.bind(this), 3000);
+}
+
+callCustomer(){
+	console.log(`Here's ${this.quantity} ${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem} for a ${this.customer}!`);
+}
+
+}
+```
