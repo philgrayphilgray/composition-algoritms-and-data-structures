@@ -140,6 +140,60 @@ const store = (
 **/
 ```
 
+### Functional Inheritence
+
+* Mimics class behavior, but includes class inheritence hurdles of thinking of something as a type of something else
+
+```
+const staff = (business, manager, employees) => {
+    const data = { business, manager, employees };
+    data.getNumberOfStaff = () => employees.length + 1;
+    data.getWorstPerformer = () => employees.sort((a, b) => a.performance - b.performance)[0];
+    data.fireOne = () => {
+        const worstIndex = data.employees.indexOf(data.getWorstPerformer());
+		const unluckyOne = data.employees[worstIndex];
+        console.log(`${manager.name}: ${unluckyOne.name}, come into my office please.`);
+		data.employees.splice(worstIndex, 1);
+    };
+    return data;
+}
+
+const kitchenStaff = (business, manager, employees) => {
+	const data = staff(business, manager, employees);
+	data.assignRoles = (first, second) => data.employees
+	.forEach((employee, index) => index % 2 === 0 ? employee.role = 'cook' : employee.role = 'dishwasher');
+	data.getCooks = () => data.employees.filter(employee => employee.role === 'cook');
+	return data;
+}
+
+/**
+const myKitchenStaff = kitchenStaff('Amen Ramen', {name: 'Cheongah'}, [{name: 'Phil', performance: 89}, {name: 'Bob', performance: 56}, {name: 'Bob 2', performance: 99}]);
+
+> myKitchenStaff.employees
+[ { name: 'Phil', performance: 89 },
+  { name: 'Bob', performance: 56 },
+  { name: 'Bob 2', performance: 99 } ]
+
+> myKitchenStaff.assignRoles()
+
+> myKitchenStaff.employees
+[ { name: 'Phil', performance: 89, role: 'cook' },
+  { name: 'Bob', performance: 56, role: 'dishwasher' },
+  { name: 'Bob 2', performance: 99, role: 'cook' } ]
+> myKitchenStaff.fireOne()
+Cheongah: Bob, come into my office please.
+
+> myKitchenStaff.getNumberOfStaff()
+3
+> myKitchenStaff.assignRoles()
+undefined
+
+> myKitchenStaff.getCooks()
+[ { name: 'Phil', performance: 89, role: 'cook' } ]
+
+**/
+```
+
 ### Factory Functions with Mixins or Objects Linked as Other Objects using Object.create
 
 * Offers all practical benefits of classes but without `new` keyword syntax or prototype confusion
@@ -283,7 +337,6 @@ Barista.prototype.callCustomer = function(){
 **/
 
 
-
 // ES6 with "Syntactic Sugar"
 
 class Barista {
@@ -339,17 +392,48 @@ callCustomer(){
 
 ## Compositional Patterns
 
+### Reduce
+
 ### Curry
 
-### Reduce
+```
+const curry = (f, arr = []) =>
+(...args) =>
+(a => a.length === f.length ? f(...a) : curry(f, a))([...arr, ...args]);
+```
 
 ### Compose
 
+* Passes a value to the input of the last function which returns its output to the input of the previous function, from right to left
+* f(g(x))
+
+```
+const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
+```
+
 ### Pipe
+
+* Passes a value to the input of the first function which returns its output to the input of the next function, from left to right
+* g(f(x))
+
+```
+const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
+```
 
 ### Functors
 
+* Must have a `.map()` interface
+* Must obey identity and composition laws
+* Should always return the same functor data structure
+
 ### Functional Mixins
+
+* Composable factory functions that pipe together
+* Encapsulation
+* Inheriting private state
+* Inheriting from multiple sources
+
+Can use `Object.assign()` to build
 
 ### Monads
 
