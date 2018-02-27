@@ -51,16 +51,16 @@ const counter = {
 
 ```
 const counter = () => ({
-	count: 0,
-	increase(){
-		this.count++;
-		return this;
-	},
-	double(){
-		this.count *= 2;
-		return this;
-	}
-})
+    count: 0,
+    increase() {
+        this.count++;
+        return this;
+    },
+    double() {
+        this.count *= 2;
+        return this;
+    }
+});
 
 /** Console
 *
@@ -70,17 +70,17 @@ const counter = () => ({
 **/
 
 const bartender = () => {
-	const secretIngredient = 'ice';
-	const api = {
-		makeDrink: function(order = 'vodka'){
-			let drink = `${order}-${secretIngredient}`;
-			return api.serveDrink(drink);
-		},
-		serveDrink: function(drink){
-			return drink;
-		}
-	}
-	return api;
+    const secretIngredient = 'ice';
+    const api = {
+        makeDrink: function (order = 'vodka') {
+            let drink = `${order}-${secretIngredient}`;
+            return api.serveDrink(drink);
+        },
+        serveDrink: function (drink) {
+            return drink;
+        }
+    }
+    return api;
 };
 
 /** Console
@@ -93,17 +93,17 @@ const bartender = () => {
 // Singleton (IIFE variation)
 
 const bartender = (() => {
-	const secretIngredient = 'ice';
-	const api = {
-		makeDrink: function(order = 'vodka'){
-			let drink = `${order}-${secretIngredient}`;
-			api.serveDrink(drink);
-		},
-		serveDrink: function(drink){
-			console.log(drink);
-		}
-	}
-	return api;
+    const secretIngredient = 'ice';
+    const api = {
+        makeDrink: function (order = 'vodka') {
+            let drink = `${order}-${secretIngredient}`;
+            api.serveDrink(drink);
+        },
+        serveDrink: function (drink) {
+            console.log(drink);
+        }
+    }
+    return api;
 })();
 
 /** Console
@@ -116,20 +116,20 @@ const bartender = (() => {
 // Passing State (Redux-like)
 
 const store = (
-	state = { bottles_of_beer: 99},
-	action) => {
-	switch(action){
-		case 'TAKE_ONE_DOWN':
-		return {
-			...state,
-			bottles_of_beer: state.bottles_of_beer - 1
-		}
-		case 'SING':
-		console.log(`${state.bottles_of_beer} bottles of beer on the wall`);
-		return state;
-		default:
-		return state;
-	}
+    state = { bottles_of_beer: 99 },
+    action) => {
+    switch (action) {
+        case 'TAKE_ONE_DOWN':
+            return {
+                ...state,
+                bottles_of_beer: state.bottles_of_beer - 1
+            }
+        case 'SING':
+            console.log(`${state.bottles_of_beer} bottles of beer on the wall`);
+            return state;
+        default:
+            return state;
+    }
 }
 
 /** Console
@@ -151,19 +151,19 @@ const staff = (business, manager, employees) => {
     data.getWorstPerformer = () => employees.sort((a, b) => a.performance - b.performance)[0];
     data.fireOne = () => {
         const worstIndex = data.employees.indexOf(data.getWorstPerformer());
-		const unluckyOne = data.employees[worstIndex];
+        const unluckyOne = data.employees[worstIndex];
         console.log(`${manager.name}: ${unluckyOne.name}, come into my office please.`);
-		data.employees.splice(worstIndex, 1);
+        data.employees.splice(worstIndex, 1);
     };
     return data;
 }
 
 const kitchenStaff = (business, manager, employees) => {
-	const data = staff(business, manager, employees);
-	data.assignRoles = (first, second) => data.employees
-	.forEach((employee, index) => index % 2 === 0 ? employee.role = 'cook' : employee.role = 'dishwasher');
-	data.getCooks = () => data.employees.filter(employee => employee.role === 'cook');
-	return data;
+    const data = staff(business, manager, employees);
+    data.assignRoles = (first, second) => data.employees
+        .forEach((employee, index) => index % 2 === 0 ? employee.role = 'cook' : employee.role = 'dishwasher');
+    data.getCooks = () => data.employees.filter(employee => employee.role === 'cook');
+    return data;
 }
 
 /**
@@ -202,15 +202,15 @@ undefined
 const newer = proto => Object.create(proto);
 
 const counter = {
-	count: 0,
-	increase(){
-		this.count++;
-		return this;
-	},
-	double(){
-		this.count *= 2;
-		return this;
-	}
+    count: 0,
+    increase() {
+        this.count++;
+        return this;
+    },
+    double() {
+        this.count *= 2;
+        return this;
+    }
 }
 
 const drinkCounter = newer(counter);
@@ -279,48 +279,48 @@ const drinkCounter = newer(counter);
 ```
 // ES5
 
-function Barista(){
-	this.menu = [
-		{name: "americano", price: {small: 2.99, medium: 3.20}},
-		{name: "drip", price: {small: 1.99, medium: 2.30}},
-		{name: "pour-over", price: {small: 3.20, medium: 3.50}}
-		];
-	this.customer = '';
-	this.selectedItem = '';
-	this.size = '';
-	this.quantity = 0;
-	this.taxes = .0575;
-	this.total = 0;
+function Barista() {
+    this.menu = [
+        { name: "americano", price: { small: 2.99, medium: 3.20 } },
+        { name: "drip", price: { small: 1.99, medium: 2.30 } },
+        { name: "pour-over", price: { small: 3.20, medium: 3.50 } }
+    ];
+    this.customer = '';
+    this.selectedItem = '';
+    this.size = '';
+    this.quantity = 0;
+    this.taxes = .0575;
+    this.total = 0;
 }
 
-Barista.prototype.order = function(customer, quantity, size, selectedItem){
-	this.customer = customer;
-	this.quantity = quantity;
-	this.size = size;
-	this.selectedItem = selectedItem;
-	this.setTotal();
+Barista.prototype.order = function (customer, quantity, size, selectedItem) {
+    this.customer = customer;
+    this.quantity = quantity;
+    this.size = size;
+    this.selectedItem = selectedItem;
+    this.setTotal();
 }
 
-Barista.prototype.setTotal = function(){
-	const selectedItemPrice = this.menu
-	.filter(item => item.name === this.selectedItem)[0].price[this.size];
-	const subtotal = selectedItemPrice * this.quantity;
-	this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
-	this.printReceipt();
+Barista.prototype.setTotal = function () {
+    const selectedItemPrice = this.menu
+        .filter(item => item.name === this.selectedItem)[0].price[this.size];
+    const subtotal = selectedItemPrice * this.quantity;
+    this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
+    this.printReceipt();
 }
 
-Barista.prototype.printReceipt = function(){
-	console.log(`Your total is: $${this.total}.
+Barista.prototype.printReceipt = function () {
+    console.log(`Your total is: $${this.total}.
 	Please wait for your name to be called.`);
-	this.serve();
+    this.serve();
 }
 
-Barista.prototype.serve = function(){
-	setTimeout(this.callCustomer.bind(this), 3000);
+Barista.prototype.serve = function () {
+    setTimeout(this.callCustomer.bind(this), 3000);
 }
 
-Barista.prototype.callCustomer = function(){
-	console.log(`Here's ${this.quantity}
+Barista.prototype.callCustomer = function () {
+    console.log(`Here's ${this.quantity}
 	${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem}
 	for a ${this.customer}!`);
 }
@@ -340,52 +340,52 @@ Barista.prototype.callCustomer = function(){
 // ES6 with "Syntactic Sugar"
 
 class Barista {
-	constructor(){
-	this.menu = [
-		{name: "americano", price: {small: 2.99, medium: 3.20}},
-		{name: "drip", price: {small: 1.99, medium: 2.30}},
-		{name: "pour-over", price: {small: 3.20, medium: 3.50}}
-		];
-	this.customer = '';
-	this.selectedItem = '';
-	this.size = '';
-	this.quantity = 0;
-	this.taxes = .0575;
-	this.total = 0;
-	}
+    constructor() {
+        this.menu = [
+            { name: "americano", price: { small: 2.99, medium: 3.20 } },
+            { name: "drip", price: { small: 1.99, medium: 2.30 } },
+            { name: "pour-over", price: { small: 3.20, medium: 3.50 } }
+        ];
+        this.customer = '';
+        this.selectedItem = '';
+        this.size = '';
+        this.quantity = 0;
+        this.taxes = .0575;
+        this.total = 0;
+    }
 
-order(customer, quantity, size, selectedItem){
-	this.customer = customer;
-	this.quantity = quantity;
-	this.size = size;
-	this.selectedItem = selectedItem;
-	this.setTotal();
-}
+    order(customer, quantity, size, selectedItem) {
+        this.customer = customer;
+        this.quantity = quantity;
+        this.size = size;
+        this.selectedItem = selectedItem;
+        this.setTotal();
+    }
 
-setTotal(){
-	const selectedItemPrice = this.menu
-	.filter(item => item.name === this.selectedItem)[0]
-	.price[this.size];
-	const subtotal = selectedItemPrice * this.quantity;
-	this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
-	this.printReceipt();
-}
+    setTotal() {
+        const selectedItemPrice = this.menu
+            .filter(item => item.name === this.selectedItem)[0]
+            .price[this.size];
+        const subtotal = selectedItemPrice * this.quantity;
+        this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
+        this.printReceipt();
+    }
 
-printReceipt(){
-	console.log(`Your total is: $${this.total}.
+    printReceipt() {
+        console.log(`Your total is: $${this.total}.
 	Please wait for your name to be called.`);
-	this.serve();
-}
+        this.serve();
+    }
 
-serve(){
-	setTimeout(this.callCustomer.bind(this), 3000);
-}
+    serve() {
+        setTimeout(this.callCustomer.bind(this), 3000);
+    }
 
-callCustomer(){
-	console.log(`Here's ${this.quantity}
+    callCustomer() {
+        console.log(`Here's ${this.quantity}
 	${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem}
 	for a ${this.customer}!`);
-}
+    }
 
 }
 ```
@@ -433,7 +433,104 @@ const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 * Inheriting private state
 * Inheriting from multiple sources
 
-Can use `Object.assign()` to build
+Return a new object with Object.assign({}, o={}, {})
+
+```
+const person = o => {
+    return Object.assign({}, o, {
+        say(myName, something) {
+            console.log(`${myName}: ${something}`);
+            return this;
+        }
+    })
+}
+
+const bartender = o => {
+    const minAge = 21;
+    const bartenderName = 'Bartender';
+    return Object.assign({}, o, {
+        askForID() {
+            this.say(bartenderName, 'Let me see your ID.');
+            this.showID(minAge);
+            return this;
+        },
+        checkID(isOldEnough) {
+            if (!isOldEnough) {
+                this.say(bartenderName, "Sorry. Go talk to Congress.");
+                return this;
+            }
+            this.say(bartenderName, 'Old enough.')
+            this.takeOrder();
+            return this;
+        },
+        initiateOrder() {
+            this.say(bartenderName, 'Hello.')
+            this.askForID();
+            return this;
+        },
+        takeOrder() {
+            this.say(bartenderName, 'What do you want?');
+            this.orderDrink();
+            return this;
+        },
+        makeDrink(drink) {
+            this.say(bartenderName, `Okay. Here's your ${drink}.`);
+            return this;
+        }
+    })
+}
+
+const customer = o => {
+    let isOldEnough = false;
+    let { age, drink, name } = o;
+    return Object.assign({}, o, {
+        getAttention() {
+            this.say(name, 'Hey.');
+            this.initiateOrder();
+            return this;
+        },
+        showID(min) {
+            isOldEnough = age >= min;
+            this.checkID(isOldEnough);
+            return this;
+        },
+        orderDrink() {
+            this.say(name, drink);
+            this.makeDrink(drink);
+            return this;
+        }
+    })
+}
+
+const createBar = customerInfo => person(bartender(customer(customerInfo)));
+
+/**
+
+> const myBarScene = createBar({age: 31, drink: 'scotch', name: 'Phil'})
+
+> myBarScene.getAttention()
+
+Phil: Hey.
+Bartender: Hello.
+Bartender: Let me see your ID.
+Bartender: Old enough.
+Bartender: What do you want?
+Phil: scotch
+Bartender: Okay. Here's your scotch.
+
+{ age: 31,
+  drink: 'scotch',
+  name: 'Phil',
+  getAttention: [Function: getAttention],
+  showID: [Function: showID],
+  orderDrink: [Function: orderDrink],
+  checkID: [Function: checkID],
+  initiateOrder: [Function: initiateOrder],
+  takeOrder: [Function: takeOrder],
+  makeDrink: [Function: makeDrink],
+  say: [Function: say] }
+**/
+```
 
 ### Monads
 
@@ -482,16 +579,16 @@ totalWithTip(50, 20); // 60
 // bar-utilities.js
 
 const totalWithTip = (total, tip) => {
-	return total + (total * (tip < 1 ? tip : tip/100));
+    return total + (total * (tip < 1 ? tip : tip / 100));
 }
 
 const BAC = (numberOfDrinks, hours, weight, gender) => {
-	const alcoholInGrams = numberOfDrinks * 14; // standard drink
-	const genderConstant = gender === 'male' ? .68 : .55;
-	const bodyWeightInGrams = weight * 454; // lbs only
-	const elapsedTime = hours * .015;
+    const alcoholInGrams = numberOfDrinks * 14; // standard drink
+    const genderConstant = gender === 'male' ? .68 : .55;
+    const bodyWeightInGrams = weight * 454; // lbs only
+    const elapsedTime = hours * .015;
 
-	return ((alcoholInGrams / (bodyWeightInGrams * genderConstant)) * 100) - elapsedTime;
+    return ((alcoholInGrams / (bodyWeightInGrams * genderConstant)) * 100) - elapsedTime;
 }
 
 export.defaults = { totalWithTip, BAC };
