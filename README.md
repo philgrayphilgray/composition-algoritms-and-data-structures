@@ -337,11 +337,9 @@ callCustomer(){
 }
 ```
 
-## Composition
+## Compositional Patterns
 
 ### Curry
-
-### Memoize
 
 ### Reduce
 
@@ -355,7 +353,7 @@ callCustomer(){
 
 ### Monads
 
-## Modules
+## File Module Pattern
 
 ### CommonJS Modules
 
@@ -486,6 +484,8 @@ AUTH_START; // "AUTH_START"
 ## Algorithms
 
 ### Recursion
+
+### Memoization
 
 ### Bubble Sort
 
