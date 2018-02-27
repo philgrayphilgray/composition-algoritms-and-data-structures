@@ -142,7 +142,7 @@ const store = (
 
 ### Functional Inheritence
 
-* Mimics class behavior, but includes class inheritence hurdles of thinking of something as a type of something else
+* Mimics class behavior, but includes class inheritence is-a relationship hurdles
 
 ```
 const staff = (business, manager, employees) => {
@@ -392,6 +392,8 @@ class Barista {
 
 ## Compositional Patterns
 
+Notes from reading Eric Elliott's [series on medium](https://medium.com/javascript-scene/composing-software-an-introduction-27b72500d6ea).
+
 ### Reduce
 
 ### Curry
@@ -432,10 +434,13 @@ const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 * Encapsulation
 * Inheriting private state
 * Inheriting from multiple sources
+* No base class is required
 
 Return a new object with Object.assign({}, o={}, {})
 
 ```
+// TODO: write a more relevant example (composing with has-a, uses-a, can-do, and not is-a).
+
 const person = o => {
     return Object.assign({}, o, {
         say(myName, something) {
@@ -530,6 +535,64 @@ Bartender: Okay. Here's your scotch.
   makeDrink: [Function: makeDrink],
   say: [Function: say] }
 **/
+```
+
+### Factory Functions with Mixins
+
+```
+const withConstructor = constructor => o => {
+    const proto = Object.assign({},
+        Object.getPrototypeOf(o),
+        { constructor }
+    );
+    return Object.assign(Object.create(proto), o);
+};
+
+const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
+
+const canSpeak = ({ myName }) => o => {
+    return {
+        ...o,
+        says(words) {
+            console.log(`${myName}: ${words}`);
+        }
+    }
+}
+
+const canServe = ({ beverage }) => o => {
+    return {
+        ...o,
+        order: '',
+        initiateOrder() {
+            this.says(`What kind of ${beverage} do you want?`);
+            return this;
+        },
+        receiveOrder(order) {
+            this.order = order;
+            this.says(`I\'ll get you one ${order}.`)
+            return this;
+        },
+        makeDrink() {
+            this.says(`Here\'s your ${this.order}.`);
+            return this;
+        }
+    }
+}
+
+const newBarista = ({ beverage = 'coffee' }) => pipe(canSpeak({ myName: 'Barista' }), canServe({ beverage }), withConstructor(newBarista))({});
+const myBarista = newBarista({});
+
+> myBarista.initiateOrder().receiveOrder('americano').makeDrink();
+Barista: What kind of coffee do you want?
+Barista: I'll get you one americano.
+Barista: Here's your americano.
+newBarista {
+  says: [Function: says],
+  order: 'americano',
+  initiateOrder: [Function: initiateOrder],
+  receiveOrder: [Function: receiveOrder],
+  makeDrink: [Function: makeDrink] }
+>
 ```
 
 ### Monads
