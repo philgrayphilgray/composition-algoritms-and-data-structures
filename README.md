@@ -9,11 +9,7 @@
 ```
 const Identity = val => val;
 
-/** Console
-*
-* Identity(3); //3
-*
-**/
+> Identity(3); //3
 ```
 
 ### Objects Literals with Methods
@@ -35,13 +31,9 @@ const counter = {
 	}
 }
 
-/** Console
-*
-* counter.count // 0
-* counter.increase().count // 1
-* counter.increase().double().count // 4
-*
-**/
+> counter.count // 0
+> counter.increase().count // 1
+> counter.increase().double().count // 4
 ```
 
 ### Factory Functions
@@ -713,7 +705,18 @@ AUTH_START; // "AUTH_START"
 
 ### Stacks
 
+* First shall be last and last shall be first.
+* A good example is the JavaScript function call stack.
+* A data container with 2 required methods: `push()` and `pop()`, functionally equivelent to Array.prototype methods of the same name.
+* 2 optional methods: `peek()` and `size()`.
+* Use a counter to keep track of the last index.
+
 ### Queues
+
+* First come, first serve.
+* A data container with 2 required methods: `enqueue()` and `dequeue`, functionally equivelent to Array.prototype methods `push()` and `shift()`, respectively.
+* 2 optional methods: `peek()` and `size()`.
+* Use a counter to keep track of the first and last index.
 
 ### Trees
 
@@ -728,6 +731,26 @@ AUTH_START; // "AUTH_START"
 ## Algorithms
 
 ### Recursion
+
+* Iterating by calling a function from within itself.
+* DRYer code.
+* Can always be implemented as a loop
+* Loops are more performant
+
+Examples
+
+* Wrapper functions
+* Memos
+* Accumulators
+
+Steps to Implement
+
+1. Identify base case(s).
+2. Identify recursive case(s).
+3. Return where appropriate.
+4. Write procedure for each case that you bring closer the base case(s).
+
+Source: Data Structures and Algorithms in Javascript on [Front End Masters](https://frontendmasters.com/courses/data-structures-algorithms/template-for-a-recursive-function).
 
 ### Memoization
 
