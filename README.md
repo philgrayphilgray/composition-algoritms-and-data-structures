@@ -54,12 +54,11 @@ const counter = () => ({
     }
 });
 
-/** Console
-*
-* counter().increase().increase().double().count // 4
-* counter().count // 0
-*
-**/
+> counter().increase().increase().double().count
+4
+> counter().count
+0
+>
 
 const bartender = () => {
     const secretIngredient = 'ice';
@@ -75,12 +74,10 @@ const bartender = () => {
     return api;
 };
 
-/** Console
-*
-* bartender().makeDrink() // 'vodka-ice'
-* bartender().makeDrink('whisky') // 'whisky-ice'
-*
-**/
+> bartender().makeDrink()
+'vodka-ice'
+> bartender().makeDrink('whisky')
+'whisky-ice'
 
 // Singleton (IIFE variation)
 
@@ -98,12 +95,8 @@ const bartender = (() => {
     return api;
 })();
 
-/** Console
-*
-* bartender.makeDrink('whisky'); // whisky-ice
-*
-**/
-
+> bartender.makeDrink('whisky');
+whisky-ice
 
 // Passing State (Redux-like)
 
@@ -124,12 +117,9 @@ const store = (
     }
 }
 
-/** Console
-*
-* store(store(undefined, 'TAKE_ONE_DOWN'), 'SING'); // 98 bottles of beer on the wall
-* // { bottles_of_beer: 98 }
-*
-**/
+> store(store(undefined, 'TAKE_ONE_DOWN'), 'SING');
+98 bottles of beer on the wall
+{ bottles_of_beer: 98 }
 ```
 
 ### Functional Inheritence
@@ -207,63 +197,72 @@ const counter = {
 
 const drinkCounter = newer(counter);
 
-/** Console
-* // inherit properties from the prototype and customize them
-* drinkCounter.count = 99;
-* drinkCounter.takeOneDown = function(){ this.count--; return this;}
-* drinkCounter.sing = function(){ return `${this.count} bottles of beer on the wall!`;}
-* drinkCounter.passItAround = function(){ return this; }
-*
-* drinkCounter.takeOneDown().passItAround().sing(); // '98 bottles of beer on the wall!'
-* drinkCounter.takeOneDown().passItAround().takeOneDown().passItAround().sing(); // '96 bottles of beer on the wall!'
-* drinkCounter.double().sing(); // '192 bottles of beer on the wall!'
-*
-* // add methods to the prototype
-* counter.goToStore = function(){ this.double(); return this;}
-* drinkCounter.goToStore().sing() // '384 bottles of beer on the wall!'
-*
-*
-**/
+
+// inherit properties from the prototype and customize them
+> const drinkCounter = newer(counter);
+undefined
+> drinkCounter.count = 99;
+99
+> drinkCounter.takeOneDown = function(){ this.count--; return this;}
+[Function]
+> drinkCounter.sing = function(){ return `${this.count} bottles of beer on the wall!`;}
+[Function]
+> drinkCounter.passItAround = function(){ return this; }
+[Function]
+> drinkCounter.takeOneDown().passItAround().sing();
+'98 bottles of beer on the wall!'
+> drinkCounter.takeOneDown().passItAround().takeOneDown().passItAround().sing();
+'96 bottles of beer on the wall!'
+> drinkCounter.double().sing();
+'192 bottles of beer on the wall!'
+> counter.goToStore = function(){ this.double(); return this;}
+[Function]
+> drinkCounter.goToStore().sing()
+'384 bottles of beer on the wall!'
 ```
 
 * Use `.__proto__` to find the prototype object
 
 ```
-/**
-*
-* drinkCounter.__proto__
-*
-*{ count: 0,
-* increase: [Function: increase],
-* double: [Function: double],
-* goToStore: [Function] }
-*
-**/
+> drinkCounter.__proto__
+{ count: 0,
+  increase: [Function: increase],
+  double: [Function: double],
+  goToStore: [Function] }
+>
 ```
 
 * Use `for...in` to iterate through all enumerable properties available to the instance:
 
 ```
-/**
-*
-* // properties on the prototype
-* const protoProps = []; for(prop in counter){protoProps.push(prop);} protoProps; // [ 'count', 'increase', 'double', 'goToStore' ]
-*
-* // properties on the instance
-* const props = []; for(prop in drinkCounter){props.push(prop);} props; // ['takeOneDown','sing','passItAround','count','increase','double','goToStore']
-*
-**/
+ // properties on the prototype
+> const protoProps = []; for(prop in counter){protoProps.push(prop);}
+4
+> protoProps;
+[ 'count', 'increase', 'double', 'goToStore' ]
+>
+
+// properties on the instance
+> const props = []; for(prop in drinkCounter){props.push(prop);}
+7
+> props;
+[ 'count',
+  'takeOneDown',
+  'sing',
+  'passItAround',
+  'increase',
+  'double',
+  'goToStore' ]
+>
 ```
 
 * What about `.constructor` or `.prototype`?
 
 ```
-/**
-*
-* drinkCounter.contructor // undefined
-* drinkCounter.prototype // undefined
-*
-**/
+> drinkCounter.contructor
+undefined
+> drinkCounter.prototype
+undefined
 ```
 
 ### Classes
@@ -318,15 +317,23 @@ Barista.prototype.callCustomer = function () {
 }
 
 
-/**
-*
-* const myBarista = new Barista();
-* myBarista.order('Phil', 1, 'small', 'americano'); // Your total is: $3.16. Please wait for your name to be called.
-* // Here's 1 americano for a Phil!
-*
-* myBarista.order('Phil', 3, 'medium', 'drip'); // Your total is: $7.30. Please wait for your name to be called.
-* // Here's 3 drips for a Phil!
-**/
+> const myBarista = new Barista();
+undefined
+> myBarista.order('Phil', 1, 'small', 'americano');
+Your total is: $3.16.
+        Please wait for your name to be called.
+undefined
+> Here's 1
+        americano
+        for a Phil!
+myBarista.order('Phil', 3, 'medium', 'drip');
+Your total is: $7.30.
+        Please wait for your name to be called.
+undefined
+> Here's 3
+        drips
+        for a Phil!
+
 
 
 // ES6 with "Syntactic Sugar"
@@ -745,10 +752,10 @@ Examples
 
 Steps to Implement
 
-1. Identify base case(s).
-2. Identify recursive case(s).
-3. Return where appropriate.
-4. Write procedure for each case that you bring closer the base case(s).
+1.  Identify base case(s).
+2.  Identify recursive case(s).
+3.  Return where appropriate.
+4.  Write procedure for each case that you bring closer the base case(s).
 
 Source: Data Structures and Algorithms in Javascript on [Front End Masters](https://frontendmasters.com/courses/data-structures-algorithms/template-for-a-recursive-function).
 
