@@ -9,7 +9,11 @@
 ```
 const Identity = val => val;
 
+/**
+
 > Identity(3); //3
+
+**/
 ```
 
 ### Objects Literals with Methods
@@ -31,9 +35,13 @@ const counter = {
 	}
 }
 
+/**
+
 > counter.count // 0
 > counter.increase().count // 1
 > counter.increase().double().count // 4
+
+**/
 ```
 
 ### Factory Functions
@@ -54,11 +62,12 @@ const counter = () => ({
     }
 });
 
+/**
 > counter().increase().increase().double().count
 4
 > counter().count
 0
->
+**/
 
 const bartender = () => {
     const secretIngredient = 'ice';
@@ -95,8 +104,12 @@ const bartender = (() => {
     return api;
 })();
 
+/**
+
 > bartender.makeDrink('whisky');
 whisky-ice
+
+**/
 
 // Passing State (Redux-like)
 
@@ -117,9 +130,13 @@ const store = (
     }
 }
 
+/**
+
 > store(store(undefined, 'TAKE_ONE_DOWN'), 'SING');
 98 bottles of beer on the wall
 { bottles_of_beer: 98 }
+
+**/
 ```
 
 ### Functional Inheritence
@@ -149,6 +166,7 @@ const kitchenStaff = (business, manager, employees) => {
 }
 
 /**
+
 const myKitchenStaff = kitchenStaff('Amen Ramen', {name: 'Cheongah'}, [{name: 'Phil', performance: 89}, {name: 'Bob', performance: 56}, {name: 'Bob 2', performance: 99}]);
 
 > myKitchenStaff.employees
@@ -197,7 +215,7 @@ const counter = {
 
 const drinkCounter = newer(counter);
 
-
+/**
 // inherit properties from the prototype and customize them
 > const drinkCounter = newer(counter);
 undefined
@@ -219,6 +237,7 @@ undefined
 [Function]
 > drinkCounter.goToStore().sing()
 '384 bottles of beer on the wall!'
+**/
 ```
 
 * Use `.__proto__` to find the prototype object
@@ -229,7 +248,6 @@ undefined
   increase: [Function: increase],
   double: [Function: double],
   goToStore: [Function] }
->
 ```
 
 * Use `for...in` to iterate through all enumerable properties available to the instance:
@@ -240,7 +258,6 @@ undefined
 4
 > protoProps;
 [ 'count', 'increase', 'double', 'goToStore' ]
->
 
 // properties on the instance
 > const props = []; for(prop in drinkCounter){props.push(prop);}
@@ -253,7 +270,6 @@ undefined
   'increase',
   'double',
   'goToStore' ]
->
 ```
 
 * What about `.constructor` or `.prototype`?
@@ -316,6 +332,7 @@ Barista.prototype.callCustomer = function () {
 	for a ${this.customer}!`);
 }
 
+/**
 
 > const myBarista = new Barista();
 undefined
@@ -334,6 +351,7 @@ undefined
         drips
         for a Phil!
 
+**/
 
 
 // ES6 with "Syntactic Sugar"
@@ -533,6 +551,7 @@ Bartender: Okay. Here's your scotch.
   takeOrder: [Function: takeOrder],
   makeDrink: [Function: makeDrink],
   say: [Function: say] }
+
 **/
 ```
 
@@ -581,6 +600,8 @@ const canServe = ({ beverage }) => o => {
 const newBarista = ({ beverage = 'coffee' }) => pipe(canSpeak({ myName: 'Barista' }), canServe({ beverage }), withConstructor(newBarista))({});
 const myBarista = newBarista({});
 
+/**
+
 > myBarista.initiateOrder().receiveOrder('americano').makeDrink();
 Barista: What kind of coffee do you want?
 Barista: I'll get you one americano.
@@ -591,10 +612,27 @@ newBarista {
   initiateOrder: [Function: initiateOrder],
   receiveOrder: [Function: receiveOrder],
   makeDrink: [Function: makeDrink] }
->
+
+**/
 ```
 
 ### Monads
+
+## Functional Programming Utilities
+
+### forEach
+
+### map
+
+### filter
+
+### reduce
+
+### flip
+
+### reverseArgs
+
+### spreadArgs
 
 ## File Module Pattern
 
@@ -659,8 +697,12 @@ export.defaults = { totalWithTip, BAC };
 
 const { totalWithTip, BAC } = require('./bar-utilities.js');
 
+/**
+
 BAC(5, 2, 165, 'male').toFixed(2); // '0.11'
 totalWithTip(50, 20); // 60
+
+**/
 ```
 
 ### AMD
@@ -727,13 +769,34 @@ AUTH_START; // "AUTH_START"
 
 ### Trees
 
+* Optimized to be searchable.
+* Everything in the left sub-tree is smaller, everything in the right sub-tree is bigger.
+* Occasionally you need to serialize the entire tree into a fat data structure.
+
 ### Linked Lists
 
 ### Binary Search Trees
 
 ### Graphs
 
+* Unidirectional, like Twitter; I follow you but you don't follow me
+* Bidirectional, like Facebook; I'm friends with you, you're friends with me
+* Models how things connect together
+* Trees are a special kind of graph
+* Unlike trees, there are circular references, and there's no clear parent-child relationship
+* Use breadth first traversal
+
+Source: 4 Semesters of CS in 5 Hours
+Part II on [Front End Masters](https://btholt.github.io/four-semesters-of-cs-part-two/).
+
 ### Hash Tables
+
+### Tries
+
+* A type of tree
+* Classic example use case is for autocomplete
+* Starts with a root node that doesn't represent any particular thing; often it's given a `value` of `''`
+* It has a bunch of child nodes that represent one letter, each of their children represent second letters of words
 
 ## Algorithms
 
@@ -771,10 +834,52 @@ Source: Data Structures and Algorithms in Javascript on [Front End Masters](http
 
 ### Quick Sort
 
+### Heap Sort
+
+### Radix Sort
+
 ### BST Traversal
 
 ### Graph Traversal
 
 ### Depth-First Search
 
+* when you know what you're looing for is farther away from the root node
+* usually a good use case for recursion
+
+#### three variations for serializing:
+
+##### preorder:
+
+* process the node, then recursibely call the method on the left subtree and then the right subtree
+* good for a sorted list of a BST
+
+##### inorder:
+
+* recursively call the method on the left tree, then process the node, and then call the method on the right tree
+* good for a deep copy of a tree
+
+##### postorder:
+
+* recursively call the method on the left subtree, then the right subtree, and then process the node.
+* good for when you're deleting a tree; delete the node only after you've deleted its children
+
+Source: 4 Semesters of CS in 5 Hours
+Part II on [Front End Masters](https://btholt.github.io/four-semesters-of-cs-part-two/).
+
 ### Breadth-First Search
+
+* when you know what you're looking for is closer to the root node
+* process one layer at a time
+* use a queue
+* useful for path-finding
+
+Source: 4 Semesters of CS in 5 Hours
+Part II on [Front End Masters](https://btholt.github.io/four-semesters-of-cs-part-two/).
+
+### Bloom Filter
+
+### Pathfinding
+
+* finds the shortest path between point A and point B
+* use breadth-first traversal
