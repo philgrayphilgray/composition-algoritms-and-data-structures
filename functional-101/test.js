@@ -1,7 +1,7 @@
 const _ = require('./index');
 
 describe('_', () => {
-  describe('.each', () => {
+  describe('`.each`', () => {
     it('should pass each item of an array as the first argument of a callback, executing that callback', () => {
       const arr = [1, 2, 3];
       const result = [];
@@ -99,7 +99,7 @@ describe('_', () => {
     });
   });
 
-  describe('.map', () => {
+  describe('`.map`', () => {
     it('should pass each value of an array into a callback, and return a new array of values', () => {
       const arr = [1, 2, 3];
       const expected = [2, 4, 6];
@@ -111,150 +111,199 @@ describe('_', () => {
 
       expect(actual).toEqual(expected);
     });
-  });
-  it('should not mutate the original array', () => {
-    const arr = [1, 2, 3];
-    const expected = [2, 4, 6];
+    it('should not mutate the original array', () => {
+      const arr = [1, 2, 3];
+      const expected = [2, 4, 6];
 
-    const double = num => {
-      return num * 2;
-    };
-    _.map(arr, double);
+      const double = num => {
+        return num * 2;
+      };
+      _.map(arr, double);
 
-    expect(arr).toEqual(arr);
-  });
+      expect(arr).toEqual(arr);
+    });
 
-  it('should also pass an index for each value of the array to the callback', () => {
-    const arr = ['cat', 'dog', 'frog'];
-    const expected = [[0, 'cat'], [1, 'dog'], [2, 'frog']];
+    it('should also pass an index for each value of the array to the callback', () => {
+      const arr = ['cat', 'dog', 'frog'];
+      const expected = [[0, 'cat'], [1, 'dog'], [2, 'frog']];
 
-    const toKeyValuePairs = (value, index) => {
-      return [index, value];
-    };
-    const actual = _.map(arr, toKeyValuePairs);
+      const toKeyValuePairs = (value, index) => {
+        return [index, value];
+      };
+      const actual = _.map(arr, toKeyValuePairs);
 
-    expect(actual).toEqual(expected);
-  });
+      expect(actual).toEqual(expected);
+    });
 
-  it('should pass the original array as the third argument to the callback', () => {
-    const arr = [1, 2, 3];
-    const expected = [[1, 2, 3], [1, 2, 3], [1, 2, 3]];
+    it('should pass the original array as the third argument to the callback', () => {
+      const arr = [1, 2, 3];
+      const expected = [[1, 2, 3], [1, 2, 3], [1, 2, 3]];
 
-    const to2dArray = (num, index, list) => {
-      return list;
-    };
-    const actual = _.map(arr, to2dArray);
+      const to2dArray = (num, index, list) => {
+        return list;
+      };
+      const actual = _.map(arr, to2dArray);
 
-    expect(actual).toEqual(expected);
-  });
-  //   it('should pass each value of an object into a callback, and return a new object of values', () => {
-  //     const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-  //     const expected = { 0: 'cats', 1: 'dogs', 2: 'frogs' };
+      expect(actual).toEqual(expected);
+    });
 
-  //     const pluralize = val => {
-  //       return val + 's';
-  //     };
+    it('should pass each value of an object into a callback, and return a new array of the values', () => {
+      const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
+      const expected = ['cats', 'dogs', 'frogs'];
 
-  //     const actual = _.map(obj, pluralize);
+      const pluralize = val => {
+        return val + 's';
+      };
 
-  //     expect(actual).toEqual(expected);
-  //   });
-  //   it('should not mutate the original object', () => {
-  //     const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-  //     const expected = { 0: 'cats', 1: 'dogs', 2: 'frogs' };
+      const actual = _.map(obj, pluralize);
 
-  //     const pluralize = val => {
-  //       return val + 's';
-  //     };
-  //     _.map(obj, pluralize);
+      expect(actual).toEqual(expected);
+    });
 
-  //     expect(obj).toEqual(obj);
-  //   });
-  //   it('should also pass each key in the object as the second argument to the callback', () => {
-  //     //assuming this should be alpha
-  //     const obj = { cats: 2, dogs: 2, frogs: 1 };
-  //     const expected = {
-  //       0: { type: 'cats', count: 2 },
-  //       1: { type: 'dogs', count: 2 },
-  //       2: { type: 'frogs', count: 1 }
-  //     };
-  //     const hydrateObject = (value, key) => {
-  //       return { type: key, count: value };
-  //     };
+    it('should pass each key in the object as the second argument to the callback', () => {
+      const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
+      const expected = [['0', 'cat'], ['1', 'dog'], ['2', 'frog']];
 
-  //     const actual = _.map(obj, hydrateObject);
+      const toKeyValuePairs = (val, key) => {
+        return [key, val];
+      };
 
-  //     expect(actual).toEqual(expected);
-  //   });
+      const actual = _.map(obj, toKeyValuePairs);
 
-  /* OOPS: IT SHOULD ALWAYS RETURN AN ARRAY */
+      expect(actual).toEqual(expected);
+    });
 
-  it('should pass each value of an object into a callback, and return a new array of the values', () => {
-    const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-    const expected = ['cats', 'dogs', 'frogs'];
+    it('should also pass an index for each iteration as a third argument to the callback', () => {
+      const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
+      const expected = [[0, 'cat'], [1, 'dog'], [2, 'frog']];
 
-    const pluralize = val => {
-      return val + 's';
-    };
+      const toIndexValuePairs = (val, key, index) => {
+        return [index, val];
+      };
 
-    const actual = _.map(obj, pluralize);
+      const actual = _.map(obj, toIndexValuePairs);
 
-    expect(actual).toEqual(expected);
-  });
+      expect(actual).toEqual(expected);
+    });
 
-  it('should pass each key in the object as the second argument to the callback', () => {
-    const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-    const expected = [['0', 'cat'], ['1', 'dog'], ['2', 'frog']];
+    it('should pass the original object as the fourth argument to the callback', () => {
+      const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
+      const expected = [
+        { 0: 'cat', 1: 'dog', 2: 'frog' },
+        { 0: 'cat', 1: 'dog', 2: 'frog' },
+        { 0: 'cat', 1: 'dog', 2: 'frog' }
+      ];
 
-    const toKeyValuePairs = (val, key) => {
-      return [key, val];
-    };
+      const toRepeatingObjects = (val, key, index, original) => {
+        return original;
+      };
 
-    const actual = _.map(obj, toKeyValuePairs);
+      const actual = _.map(obj, toRepeatingObjects);
 
-    expect(actual).toEqual(expected);
-  });
+      expect(actual).toEqual(expected);
+    });
 
-  it('should also pass an index for each iteration as a third argument to the callback', () => {
-    const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-    const expected = [[0, 'cat'], [1, 'dog'], [2, 'frog']];
+    it('should return an empty array when the first argument is not an array or object, or is otherwise empty', () => {
+      const obj = {};
+      const expected = [];
 
-    const toIndexValuePairs = (val, key, index) => {
-      return [index, val];
-    };
+      const pluralize = val => {
+        return val + 's';
+      };
 
-    const actual = _.map(obj, toIndexValuePairs);
+      const actual = _.map(obj, pluralize);
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
   });
 
-  it('should pass the original object as the fourth argument to the callback', () => {
-    const obj = { 0: 'cat', 1: 'dog', 2: 'frog' };
-    const expected = [
-      { 0: 'cat', 1: 'dog', 2: 'frog' },
-      { 0: 'cat', 1: 'dog', 2: 'frog' },
-      { 0: 'cat', 1: 'dog', 2: 'frog' }
-    ];
+  describe('`.filter`', () => {
+    it('should pass values of an array through a callback and return a new array of only the values that return true', () => {
+      const arr = [1, 2, 3, 4];
+      const expected = [2, 4];
 
-    const toRepeatingObjects = (val, key, index, original) => {
-      return original;
-    };
+      const filterByEven = num => {
+        return num % 2 === 0;
+      };
 
-    const actual = _.map(obj, toRepeatingObjects);
+      const actual = _.filter(arr, filterByEven);
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
+
+    it('should pass the index as the second argument to the callback', () => {
+      const arr = [1, 2, 3, 4];
+      const expected = [1, 3];
+
+      const filterByEvenIndex = (num, index) => {
+        return index % 2 === 0;
+      };
+
+      const actual = _.filter(arr, filterByEvenIndex);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should pass the original array as the third argument to the callback', () => {
+      const arr = [1, 2, 3, 4];
+      const expected = [1, 2, 3, 4];
+
+      const filterByEvenToMatrix = (num, index, original) => {
+        return original.indexOf(num) !== -1;
+      };
+
+      const actual = _.filter(arr, filterByEvenToMatrix);
+
+      expect(actual).toEqual(expected);
+    });
+    it('should pass values in an object through a callback and return a new array of only the values that return true', () => {
+      const obj = { dogs: 3, cats: 2, birds: 4, spiders: 100 };
+      const expected = [4, 100];
+
+      const filterByGreaterThanThree = num => {
+        return num > 3;
+      };
+
+      const actual = _.filter(obj, filterByGreaterThanThree);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return an empty array when the first argument is not an array or object, or is otherwise empty', () => {
+      const str = 'something else';
+      const expected = [];
+
+      const identity = item => {
+        return item;
+      };
+      const actual = _.filter(str, identity);
+
+      expect(actual).toEqual(expected);
+    });
   });
+  describe('`.from`', () => {
+    it('should return a new array of the enumerable values from a non-array data structure', () => {
+      const notArray = { 0: 'bird', 1: 'dog' };
 
-  it('should return an empty array when the first argument is not an array or object, or is otherwise empty', () => {
-    const obj = {};
-    const expected = [];
+      // has a non-enumerable array-like method
+      Object.defineProperty(notArray, 'length', {
+        enumerable: false,
+        value: function() {
+          let l = 0;
+          for (let key in this) {
+            if (this.propertyIsEnumerable(key)) {
+              l++;
+            }
+          }
+          return l;
+        }.bind(notArray)
+      });
 
-    const pluralize = val => {
-      return val + 's';
-    };
+      const expected = ['bird', 'dog'];
 
-    const actual = _.map(obj, pluralize);
+      const actual = _.from(notArray);
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
   });
 });

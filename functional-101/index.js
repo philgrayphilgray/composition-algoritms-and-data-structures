@@ -45,4 +45,43 @@ _.map = function(list, callback) {
   return newArray;
 };
 
+_.filter = function(list, callback) {
+  const isArray = Array.isArray(list);
+  const isObject = typeof list === 'object';
+  const isEmpty = list => {
+    for (let key in list) {
+      if (list.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const filteredArray = [];
+
+  if (isArray && isObject) {
+    for (let value of list) {
+      if (callback(value, list.indexOf(value), list)) {
+        filteredArray.push(value);
+      }
+    }
+  } else if (isObject) {
+    for (let key in list) {
+      if (callback(list[key], key, list)) {
+        filteredArray.push(list[key]);
+      }
+    }
+  }
+
+  return filteredArray;
+};
+
+_.from = function(list) {
+  const newArray = [];
+  for (value in list) {
+    newArray.push(list[value]);
+  }
+  return newArray;
+};
+
 module.exports = _;
