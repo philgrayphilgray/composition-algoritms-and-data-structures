@@ -306,4 +306,38 @@ describe('_', () => {
       expect(actual).toEqual(expected);
     });
   });
+
+  describe('`.reduce`', () => {
+    it('it calls a function for each item, passing in the return value of the previous call', () => {
+      const arr = [1, 2, 3, 4];
+      const expected = 10;
+      const initial = 0;
+      const sum = (acc, curr) => acc + curr;
+
+      const actual = _.reduce(arr, sum, initial);
+
+      expect(actual).toEqual(expected);
+    });
+
+    // it('uses the first value of the collection when no initial value is specified', () => {
+    //   const arr = [1, 2, 3, 4];
+    //   const expected = 11;
+    //   const sum = (acc, curr) => acc + curr;
+
+    //   const actual = _.reduce(arr, sum);
+
+    //   expect(actual).toEqual(expected);
+    // });
+
+    it('it can accept an object as the list argument', () => {
+      const obj = { cats: 2, dogs: 2, birds: 2, fish: 6 };
+      const expected = 12;
+      const initial = 0;
+      const sum = (acc, curr) => acc + curr;
+
+      const actual = _.reduce(obj, sum, initial);
+
+      expect(actual).toEqual(expected);
+    });
+  });
 });

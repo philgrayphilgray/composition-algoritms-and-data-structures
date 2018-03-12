@@ -84,4 +84,30 @@ _.from = function(list) {
   return newArray;
 };
 
+_.reduce = function(list, callback, initial) {
+  const isArray = Array.isArray(list);
+  const isObject = typeof list === 'object';
+  const isEmpty = list => {
+    for (let key in list) {
+      if (list.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  let index = 0;
+
+  if (isArray && isObject) {
+    for (let value of list) {
+      initial = callback(initial, value, index++, list);
+    }
+  } else if (isObject) {
+    for (let key in list) {
+      initial = callback(initial, list[key], index++, list);
+    }
+  }
+  return initial;
+};
+
 module.exports = _;
