@@ -8,5 +8,11 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^22.4.2",
+    "xxhashjs": "^0.2.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.5"
+  }
 }
