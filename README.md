@@ -6,14 +6,12 @@
 
 * Predictable and easy to test as long (as long as you separate "pure" functions from functions with side effects)
 
-```
+```js
 const Identity = val => val;
 
-/**
+
 
 > Identity(3); //3
-
-**/
 ```
 
 ### Objects Literals with Methods
@@ -22,26 +20,24 @@ const Identity = val => val;
 * Supports method chaining
 * Supports only one instance
 
-```
+```js
 const counter = {
-	count: 0,
-	increase(){
-		this.count++;
-		return this;
-	},
-	double(){
-		this.count *= 2;
-		return this;
-	}
-}
+  count: 0,
+  increase() {
+    this.count++;
+    return this;
+  },
+  double() {
+    this.count *= 2;
+    return this;
+  }
+};
 
-/**
+
 
 > counter.count // 0
 > counter.increase().count // 1
 > counter.increase().double().count // 4
-
-**/
 ```
 
 ### Factory Functions
@@ -49,7 +45,7 @@ const counter = {
 * Supports many instances
 * Supports encapsulation or hiding internal state from a public api
 
-```
+```js
 const counter = () => ({
     count: 0,
     increase() {
@@ -62,12 +58,12 @@ const counter = () => ({
     }
 });
 
-/**
+
 > counter().increase().increase().double().count
 4
 > counter().count
 0
-**/
+
 
 const bartender = () => {
     const secretIngredient = 'ice';
@@ -104,12 +100,12 @@ const bartender = (() => {
     return api;
 })();
 
-/**
+
 
 > bartender.makeDrink('whisky');
 whisky-ice
 
-**/
+
 
 // Passing State (Redux-like)
 
@@ -130,42 +126,49 @@ const store = (
     }
 }
 
-/**
+
 
 > store(store(undefined, 'TAKE_ONE_DOWN'), 'SING');
 98 bottles of beer on the wall
 { bottles_of_beer: 98 }
-
-**/
 ```
 
 ### Functional Inheritence
 
 * Mimics class behavior, but includes class inheritence is-a relationship hurdles
 
-```
+```js
 const staff = (business, manager, employees) => {
-    const data = { business, manager, employees };
-    data.getNumberOfStaff = () => employees.length + 1;
-    data.getWorstPerformer = () => employees.sort((a, b) => a.performance - b.performance)[0];
-    data.fireOne = () => {
-        const worstIndex = data.employees.indexOf(data.getWorstPerformer());
-        const unluckyOne = data.employees[worstIndex];
-        console.log(`${manager.name}: ${unluckyOne.name}, come into my office please.`);
-        data.employees.splice(worstIndex, 1);
-    };
-    return data;
-}
+  const data = { business, manager, employees };
+  data.getNumberOfStaff = () => employees.length + 1;
+  data.getWorstPerformer = () =>
+    employees.sort((a, b) => a.performance - b.performance)[0];
+  data.fireOne = () => {
+    const worstIndex = data.employees.indexOf(data.getWorstPerformer());
+    const unluckyOne = data.employees[worstIndex];
+    console.log(
+      `${manager.name}: ${unluckyOne.name}, come into my office please.`
+    );
+    data.employees.splice(worstIndex, 1);
+  };
+  return data;
+};
 
 const kitchenStaff = (business, manager, employees) => {
-    const data = staff(business, manager, employees);
-    data.assignRoles = (first, second) => data.employees
-        .forEach((employee, index) => index % 2 === 0 ? employee.role = 'cook' : employee.role = 'dishwasher');
-    data.getCooks = () => data.employees.filter(employee => employee.role === 'cook');
-    return data;
-}
+  const data = staff(business, manager, employees);
+  data.assignRoles = (first, second) =>
+    data.employees.forEach(
+      (employee, index) =>
+        index % 2 === 0
+          ? (employee.role = 'cook')
+          : (employee.role = 'dishwasher')
+    );
+  data.getCooks = () =>
+    data.employees.filter(employee => employee.role === 'cook');
+  return data;
+};
 
-/**
+
 
 const myKitchenStaff = kitchenStaff('Amen Ramen', {name: 'Cheongah'}, [{name: 'Phil', performance: 89}, {name: 'Bob', performance: 56}, {name: 'Bob 2', performance: 99}]);
 
@@ -190,32 +193,30 @@ undefined
 
 > myKitchenStaff.getCooks()
 [ { name: 'Phil', performance: 89, role: 'cook' } ]
-
-**/
 ```
 
 ### Factory Functions with Mixins or Objects Linked as Other Objects using Object.create
 
 * Offers all practical benefits of classes but without `new` keyword syntax or prototype confusion
 
-```
+```js
 const newer = proto => Object.create(proto);
 
 const counter = {
-    count: 0,
-    increase() {
-        this.count++;
-        return this;
-    },
-    double() {
-        this.count *= 2;
-        return this;
-    }
-}
+  count: 0,
+  increase() {
+    this.count++;
+    return this;
+  },
+  double() {
+    this.count *= 2;
+    return this;
+  }
+};
 
 const drinkCounter = newer(counter);
 
-/**
+
 // inherit properties from the prototype and customize them
 > const drinkCounter = newer(counter);
 undefined
@@ -237,12 +238,11 @@ undefined
 [Function]
 > drinkCounter.goToStore().sing()
 '384 bottles of beer on the wall!'
-**/
 ```
 
 * Use `.__proto__` to find the prototype object
 
-```
+```js
 > drinkCounter.__proto__
 { count: 0,
   increase: [Function: increase],
@@ -252,7 +252,7 @@ undefined
 
 * Use `for...in` to iterate through all enumerable properties available to the instance:
 
-```
+```js
  // properties on the prototype
 > const protoProps = []; for(prop in counter){protoProps.push(prop);}
 4
@@ -274,7 +274,7 @@ undefined
 
 * What about `.constructor` or `.prototype`?
 
-```
+```js
 > drinkCounter.contructor
 undefined
 > drinkCounter.prototype
@@ -283,56 +283,57 @@ undefined
 
 ### Classes
 
-```
+```js
 // ES5
 
 function Barista() {
-    this.menu = [
-        { name: "americano", price: { small: 2.99, medium: 3.20 } },
-        { name: "drip", price: { small: 1.99, medium: 2.30 } },
-        { name: "pour-over", price: { small: 3.20, medium: 3.50 } }
-    ];
-    this.customer = '';
-    this.selectedItem = '';
-    this.size = '';
-    this.quantity = 0;
-    this.taxes = .0575;
-    this.total = 0;
+  this.menu = [
+    { name: 'americano', price: { small: 2.99, medium: 3.2 } },
+    { name: 'drip', price: { small: 1.99, medium: 2.3 } },
+    { name: 'pour-over', price: { small: 3.2, medium: 3.5 } }
+  ];
+  this.customer = '';
+  this.selectedItem = '';
+  this.size = '';
+  this.quantity = 0;
+  this.taxes = 0.0575;
+  this.total = 0;
 }
 
-Barista.prototype.order = function (customer, quantity, size, selectedItem) {
-    this.customer = customer;
-    this.quantity = quantity;
-    this.size = size;
-    this.selectedItem = selectedItem;
-    this.setTotal();
-}
+Barista.prototype.order = function(customer, quantity, size, selectedItem) {
+  this.customer = customer;
+  this.quantity = quantity;
+  this.size = size;
+  this.selectedItem = selectedItem;
+  this.setTotal();
+};
 
-Barista.prototype.setTotal = function () {
-    const selectedItemPrice = this.menu
-        .filter(item => item.name === this.selectedItem)[0].price[this.size];
-    const subtotal = selectedItemPrice * this.quantity;
-    this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
-    this.printReceipt();
-}
+Barista.prototype.setTotal = function() {
+  const selectedItemPrice = this.menu.filter(
+    item => item.name === this.selectedItem
+  )[0].price[this.size];
+  const subtotal = selectedItemPrice * this.quantity;
+  this.total = (subtotal + subtotal * this.taxes).toFixed(2);
+  this.printReceipt();
+};
 
-Barista.prototype.printReceipt = function () {
-    console.log(`Your total is: $${this.total}.
+Barista.prototype.printReceipt = function() {
+  console.log(`Your total is: $${this.total}.
 	Please wait for your name to be called.`);
-    this.serve();
-}
+  this.serve();
+};
 
-Barista.prototype.serve = function () {
-    setTimeout(this.callCustomer.bind(this), 3000);
-}
+Barista.prototype.serve = function() {
+  setTimeout(this.callCustomer.bind(this), 3000);
+};
 
-Barista.prototype.callCustomer = function () {
-    console.log(`Here's ${this.quantity}
+Barista.prototype.callCustomer = function() {
+  console.log(`Here's ${this.quantity}
 	${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem}
 	for a ${this.customer}!`);
-}
+};
 
-/**
+
 
 > const myBarista = new Barista();
 undefined
@@ -351,59 +352,57 @@ undefined
         drips
         for a Phil!
 
-**/
 
 
 // ES6 with "Syntactic Sugar"
 
 class Barista {
-    constructor() {
-        this.menu = [
-            { name: "americano", price: { small: 2.99, medium: 3.20 } },
-            { name: "drip", price: { small: 1.99, medium: 2.30 } },
-            { name: "pour-over", price: { small: 3.20, medium: 3.50 } }
-        ];
-        this.customer = '';
-        this.selectedItem = '';
-        this.size = '';
-        this.quantity = 0;
-        this.taxes = .0575;
-        this.total = 0;
-    }
+  constructor() {
+    this.menu = [
+      { name: 'americano', price: { small: 2.99, medium: 3.2 } },
+      { name: 'drip', price: { small: 1.99, medium: 2.3 } },
+      { name: 'pour-over', price: { small: 3.2, medium: 3.5 } }
+    ];
+    this.customer = '';
+    this.selectedItem = '';
+    this.size = '';
+    this.quantity = 0;
+    this.taxes = 0.0575;
+    this.total = 0;
+  }
 
-    order(customer, quantity, size, selectedItem) {
-        this.customer = customer;
-        this.quantity = quantity;
-        this.size = size;
-        this.selectedItem = selectedItem;
-        this.setTotal();
-    }
+  order(customer, quantity, size, selectedItem) {
+    this.customer = customer;
+    this.quantity = quantity;
+    this.size = size;
+    this.selectedItem = selectedItem;
+    this.setTotal();
+  }
 
-    setTotal() {
-        const selectedItemPrice = this.menu
-            .filter(item => item.name === this.selectedItem)[0]
-            .price[this.size];
-        const subtotal = selectedItemPrice * this.quantity;
-        this.total = (subtotal + (subtotal * this.taxes)).toFixed(2);
-        this.printReceipt();
-    }
+  setTotal() {
+    const selectedItemPrice = this.menu.filter(
+      item => item.name === this.selectedItem
+    )[0].price[this.size];
+    const subtotal = selectedItemPrice * this.quantity;
+    this.total = (subtotal + subtotal * this.taxes).toFixed(2);
+    this.printReceipt();
+  }
 
-    printReceipt() {
-        console.log(`Your total is: $${this.total}.
+  printReceipt() {
+    console.log(`Your total is: $${this.total}.
 	Please wait for your name to be called.`);
-        this.serve();
-    }
+    this.serve();
+  }
 
-    serve() {
-        setTimeout(this.callCustomer.bind(this), 3000);
-    }
+  serve() {
+    setTimeout(this.callCustomer.bind(this), 3000);
+  }
 
-    callCustomer() {
-        console.log(`Here's ${this.quantity}
+  callCustomer() {
+    console.log(`Here's ${this.quantity}
 	${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem}
 	for a ${this.customer}!`);
-    }
-
+  }
 }
 ```
 
@@ -415,10 +414,9 @@ Notes from reading Eric Elliott's [series on medium](https://medium.com/javascri
 
 ### Curry
 
-```
-const curry = (f, arr = []) =>
-(...args) =>
-(a => a.length === f.length ? f(...a) : curry(f, a))([...arr, ...args]);
+```js
+const curry = (f, arr = []) => (...args) =>
+  (a => (a.length === f.length ? f(...a) : curry(f, a)))([...arr, ...args]);
 ```
 
 ### Compose
@@ -426,7 +424,7 @@ const curry = (f, arr = []) =>
 * Passes a value to the input of the last function which returns its output to the input of the previous function, from right to left
 * f(g(x))
 
-```
+```js
 const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
 ```
 
@@ -435,7 +433,7 @@ const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
 * Passes a value to the input of the first function which returns its output to the input of the next function, from left to right
 * g(f(x))
 
-```
+```js
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 ```
 
@@ -455,78 +453,78 @@ const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
 Return a new object with Object.assign({}, o={}, {})
 
-```
+```js
 // TODO: write a more relevant example (composing with has-a, uses-a, can-do, and not is-a).
 
 const person = o => {
-    return Object.assign({}, o, {
-        say(myName, something) {
-            console.log(`${myName}: ${something}`);
-            return this;
-        }
-    })
-}
+  return Object.assign({}, o, {
+    say(myName, something) {
+      console.log(`${myName}: ${something}`);
+      return this;
+    }
+  });
+};
 
 const bartender = o => {
-    const minAge = 21;
-    const bartenderName = 'Bartender';
-    return Object.assign({}, o, {
-        askForID() {
-            this.say(bartenderName, 'Let me see your ID.');
-            this.showID(minAge);
-            return this;
-        },
-        checkID(isOldEnough) {
-            if (!isOldEnough) {
-                this.say(bartenderName, "Sorry. Go talk to Congress.");
-                return this;
-            }
-            this.say(bartenderName, 'Old enough.')
-            this.takeOrder();
-            return this;
-        },
-        initiateOrder() {
-            this.say(bartenderName, 'Hello.')
-            this.askForID();
-            return this;
-        },
-        takeOrder() {
-            this.say(bartenderName, 'What do you want?');
-            this.orderDrink();
-            return this;
-        },
-        makeDrink(drink) {
-            this.say(bartenderName, `Okay. Here's your ${drink}.`);
-            return this;
-        }
-    })
-}
+  const minAge = 21;
+  const bartenderName = 'Bartender';
+  return Object.assign({}, o, {
+    askForID() {
+      this.say(bartenderName, 'Let me see your ID.');
+      this.showID(minAge);
+      return this;
+    },
+    checkID(isOldEnough) {
+      if (!isOldEnough) {
+        this.say(bartenderName, 'Sorry. Go talk to Congress.');
+        return this;
+      }
+      this.say(bartenderName, 'Old enough.');
+      this.takeOrder();
+      return this;
+    },
+    initiateOrder() {
+      this.say(bartenderName, 'Hello.');
+      this.askForID();
+      return this;
+    },
+    takeOrder() {
+      this.say(bartenderName, 'What do you want?');
+      this.orderDrink();
+      return this;
+    },
+    makeDrink(drink) {
+      this.say(bartenderName, `Okay. Here's your ${drink}.`);
+      return this;
+    }
+  });
+};
 
 const customer = o => {
-    let isOldEnough = false;
-    let { age, drink, name } = o;
-    return Object.assign({}, o, {
-        getAttention() {
-            this.say(name, 'Hey.');
-            this.initiateOrder();
-            return this;
-        },
-        showID(min) {
-            isOldEnough = age >= min;
-            this.checkID(isOldEnough);
-            return this;
-        },
-        orderDrink() {
-            this.say(name, drink);
-            this.makeDrink(drink);
-            return this;
-        }
-    })
-}
+  let isOldEnough = false;
+  let { age, drink, name } = o;
+  return Object.assign({}, o, {
+    getAttention() {
+      this.say(name, 'Hey.');
+      this.initiateOrder();
+      return this;
+    },
+    showID(min) {
+      isOldEnough = age >= min;
+      this.checkID(isOldEnough);
+      return this;
+    },
+    orderDrink() {
+      this.say(name, drink);
+      this.makeDrink(drink);
+      return this;
+    }
+  });
+};
 
 const createBar = customerInfo => person(bartender(customer(customerInfo)));
 
-/**
+
 
 > const myBarScene = createBar({age: 31, drink: 'scotch', name: 'Phil'})
 
@@ -551,56 +549,56 @@ Bartender: Okay. Here's your scotch.
   takeOrder: [Function: takeOrder],
   makeDrink: [Function: makeDrink],
   say: [Function: say] }
-
-**/
 ```
 
 ### Factory Functions with Mixins
 
-```
+```js
 const withConstructor = constructor => o => {
-    const proto = Object.assign({},
-        Object.getPrototypeOf(o),
-        { constructor }
-    );
-    return Object.assign(Object.create(proto), o);
+  const proto = Object.assign({}, Object.getPrototypeOf(o), { constructor });
+  return Object.assign(Object.create(proto), o);
 };
 
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x);
 
 const canSpeak = ({ myName }) => o => {
-    return {
-        ...o,
-        says(words) {
-            console.log(`${myName}: ${words}`);
-        }
+  return {
+    ...o,
+    says(words) {
+      console.log(`${myName}: ${words}`);
     }
-}
+  };
+};
 
 const canServe = ({ beverage }) => o => {
-    return {
-        ...o,
-        order: '',
-        initiateOrder() {
-            this.says(`What kind of ${beverage} do you want?`);
-            return this;
-        },
-        receiveOrder(order) {
-            this.order = order;
-            this.says(`I\'ll get you one ${order}.`)
-            return this;
-        },
-        makeDrink() {
-            this.says(`Here\'s your ${this.order}.`);
-            return this;
-        }
+  return {
+    ...o,
+    order: '',
+    initiateOrder() {
+      this.says(`What kind of ${beverage} do you want?`);
+      return this;
+    },
+    receiveOrder(order) {
+      this.order = order;
+      this.says(`I\'ll get you one ${order}.`);
+      return this;
+    },
+    makeDrink() {
+      this.says(`Here\'s your ${this.order}.`);
+      return this;
     }
-}
+  };
+};
 
-const newBarista = ({ beverage = 'coffee' }) => pipe(canSpeak({ myName: 'Barista' }), canServe({ beverage }), withConstructor(newBarista))({});
+const newBarista = ({ beverage = 'coffee' }) =>
+  pipe(
+    canSpeak({ myName: 'Barista' }),
+    canServe({ beverage }),
+    withConstructor(newBarista)
+  )({});
 const myBarista = newBarista({});
 
-/**
+
 
 > myBarista.initiateOrder().receiveOrder('americano').makeDrink();
 Barista: What kind of coffee do you want?
@@ -612,8 +610,6 @@ newBarista {
   initiateOrder: [Function: initiateOrder],
   receiveOrder: [Function: receiveOrder],
   makeDrink: [Function: makeDrink] }
-
-**/
 ```
 
 ### Monads
@@ -643,7 +639,7 @@ newBarista {
 * Synchronous API
 * One module per file unless used with destructuring
 
-```
+```js
 /** Export an anonymous function **/
 
 
@@ -697,12 +693,10 @@ export.defaults = { totalWithTip, BAC };
 
 const { totalWithTip, BAC } = require('./bar-utilities.js');
 
-/**
+
 
 BAC(5, 2, 165, 'male').toFixed(2); // '0.11'
 totalWithTip(50, 20); // 60
-
-**/
 ```
 
 ### AMD
@@ -715,7 +709,7 @@ totalWithTip(50, 20); // 60
 * Future support for both
 * Supports asynchronous module loading
 
-```
+```js
 // tip-utility.js
 
 export default (total, tip) => {
