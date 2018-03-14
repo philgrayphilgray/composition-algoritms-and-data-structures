@@ -8,9 +8,9 @@
 
 ```js
 const Identity = val => val;
+```
 
-
-
+```shell
 > Identity(3); //3
 ```
 
@@ -32,9 +32,9 @@ const counter = {
     return this;
   }
 };
+```
 
-
-
+```shell
 > counter.count // 0
 > counter.increase().count // 1
 > counter.increase().double().count // 4
@@ -47,87 +47,91 @@ const counter = {
 
 ```js
 const counter = () => ({
-    count: 0,
-    increase() {
-        this.count++;
-        return this;
-    },
-    double() {
-        this.count *= 2;
-        return this;
-    }
+  count: 0,
+  increase() {
+    this.count++;
+    return this;
+  },
+  double() {
+    this.count *= 2;
+    return this;
+  }
 });
+```
 
-
+```shell
 > counter().increase().increase().double().count
 4
 > counter().count
 0
+```
 
-
+```js
 const bartender = () => {
-    const secretIngredient = 'ice';
-    const api = {
-        makeDrink: function (order = 'vodka') {
-            let drink = `${order}-${secretIngredient}`;
-            return api.serveDrink(drink);
-        },
-        serveDrink: function (drink) {
-            return drink;
-        }
+  const secretIngredient = 'ice';
+  const api = {
+    makeDrink: function(order = 'vodka') {
+      let drink = `${order}-${secretIngredient}`;
+      return api.serveDrink(drink);
+    },
+    serveDrink: function(drink) {
+      return drink;
     }
-    return api;
+  };
+  return api;
 };
+```
 
+```shell
 > bartender().makeDrink()
-'vodka-ice'
+> 'vodka-ice'
 > bartender().makeDrink('whisky')
-'whisky-ice'
+> 'whisky-ice'
+```
 
+```js
 // Singleton (IIFE variation)
 
 const bartender = (() => {
-    const secretIngredient = 'ice';
-    const api = {
-        makeDrink: function (order = 'vodka') {
-            let drink = `${order}-${secretIngredient}`;
-            api.serveDrink(drink);
-        },
-        serveDrink: function (drink) {
-            console.log(drink);
-        }
+  const secretIngredient = 'ice';
+  const api = {
+    makeDrink: function(order = 'vodka') {
+      let drink = `${order}-${secretIngredient}`;
+      api.serveDrink(drink);
+    },
+    serveDrink: function(drink) {
+      console.log(drink);
     }
-    return api;
+  };
+  return api;
 })();
+```
 
-
-
+```shell
 > bartender.makeDrink('whisky');
 whisky-ice
+```
 
-
-
+```js
 // Passing State (Redux-like)
 
-const store = (
-    state = { bottles_of_beer: 99 },
-    action) => {
-    switch (action) {
-        case 'TAKE_ONE_DOWN':
-            return {
-                ...state,
-                bottles_of_beer: state.bottles_of_beer - 1
-            }
-        case 'SING':
-            console.log(`${state.bottles_of_beer} bottles of beer on the wall`);
-            return state;
-        default:
-            return state;
-    }
-}
+const store = (state = { bottles_of_beer: 99 }, action) => {
+  switch (action) {
+    case 'TAKE_ONE_DOWN':
+      return {
+        ...state,
+        bottles_of_beer: state.bottles_of_beer - 1
+      };
+    case 'SING':
+      console.log(`${state.bottles_of_beer} bottles of beer on the wall`);
+      return state;
+    default:
+      return state;
+  }
+};
+```
 
-
-
+```shell
 > store(store(undefined, 'TAKE_ONE_DOWN'), 'SING');
 98 bottles of beer on the wall
 { bottles_of_beer: 98 }
@@ -167,9 +171,9 @@ const kitchenStaff = (business, manager, employees) => {
     data.employees.filter(employee => employee.role === 'cook');
   return data;
 };
+```
 
-
-
+```shell
 const myKitchenStaff = kitchenStaff('Amen Ramen', {name: 'Cheongah'}, [{name: 'Phil', performance: 89}, {name: 'Bob', performance: 56}, {name: 'Bob 2', performance: 99}]);
 
 > myKitchenStaff.employees
@@ -183,6 +187,7 @@ const myKitchenStaff = kitchenStaff('Amen Ramen', {name: 'Cheongah'}, [{name: 'P
 [ { name: 'Phil', performance: 89, role: 'cook' },
   { name: 'Bob', performance: 56, role: 'dishwasher' },
   { name: 'Bob 2', performance: 99, role: 'cook' } ]
+
 > myKitchenStaff.fireOne()
 Cheongah: Bob, come into my office please.
 
@@ -215,8 +220,9 @@ const counter = {
 };
 
 const drinkCounter = newer(counter);
+```
 
-
+```shell
 // inherit properties from the prototype and customize them
 > const drinkCounter = newer(counter);
 undefined
@@ -242,7 +248,7 @@ undefined
 
 * Use `.__proto__` to find the prototype object
 
-```js
+```
 > drinkCounter.__proto__
 { count: 0,
   increase: [Function: increase],
@@ -252,7 +258,7 @@ undefined
 
 * Use `for...in` to iterate through all enumerable properties available to the instance:
 
-```js
+```shell
  // properties on the prototype
 > const protoProps = []; for(prop in counter){protoProps.push(prop);}
 4
@@ -274,7 +280,7 @@ undefined
 
 * What about `.constructor` or `.prototype`?
 
-```js
+```shell
 > drinkCounter.contructor
 undefined
 > drinkCounter.prototype
@@ -332,9 +338,9 @@ Barista.prototype.callCustomer = function() {
 	${this.quantity > 1 ? this.selectedItem + 's' : this.selectedItem}
 	for a ${this.customer}!`);
 };
+```
 
-
-
+```shell
 > const myBarista = new Barista();
 undefined
 > myBarista.order('Phil', 1, 'small', 'americano');
@@ -351,9 +357,9 @@ undefined
 > Here's 3
         drips
         for a Phil!
+```
 
-
-
+```js
 // ES6 with "Syntactic Sugar"
 
 class Barista {
@@ -523,9 +529,9 @@ const customer = o => {
 };
 
 const createBar = customerInfo => person(bartender(customer(customerInfo)));
+```
 
-
-
+```shell
 > const myBarScene = createBar({age: 31, drink: 'scotch', name: 'Phil'})
 
 > myBarScene.getAttention()
@@ -597,9 +603,9 @@ const newBarista = ({ beverage = 'coffee' }) =>
     withConstructor(newBarista)
   )({});
 const myBarista = newBarista({});
+```
 
-
-
+```shell
 > myBarista.initiateOrder().receiveOrder('americano').makeDrink();
 Barista: What kind of coffee do you want?
 Barista: I'll get you one americano.
@@ -877,3 +883,7 @@ Part II on [Front End Masters](https://btholt.github.io/four-semesters-of-cs-par
 
 * finds the shortest path between point A and point B
 * use breadth-first traversal
+
+```
+
+```
