@@ -26,6 +26,10 @@
     * [asynchronous thunk](#asynchronous-thunk)
     * [Thunk Request Sequencing Pattern](#thunk-request-sequencing-pattern)
   * [Promises](#promises)
+    * [Promise.all](#promiseall)
+    * [Promise.race](#promiserace)
+  * [Generators](#generators)
+  * [Observables](#observables)
 * [File Module Pattern](#file-module-pattern)
   * [CommonJS Modules](#commonjs-modules)
   * [AMD](#amd)
@@ -66,7 +70,7 @@
       * [postorder:](#postorder)
   * [Breadth-First Search](#breadth-first-search)
   * [Bloom Filter](#bloom-filter)
-  * [Pathfinding](#pathfinding)⏎
+  * [Pathfinding](#pathfinding)
 
 ## Building Blocks
 
@@ -876,6 +880,73 @@ p1
   })
   .catch(err => console.error('Error: ' + err.statusText));
 ```
+
+* Avoid nesting pattern; chaining is preferrable
+
+Composing Promises
+
+* Start with an array of urls
+* map through them to the ajax request wrapper function
+* reduce, using `Promise.resolve()` as the initial value; this creates a resolved Promise
+* chain `then`'s to handle each resolved promise
+
+```js
+function getFile(url) {
+  return new Promise(function(resolve, reject) {
+    ajax(url, resolve, reject);
+  });
+}
+
+const results = {};
+let count = 0;
+
+function storeInResults(response) {
+  const parsed = JSON.parse(response);
+  if (count === 0) {
+    results['poets'] = parsed;
+  } else if (count === 1) {
+    results['poems'] = parsed;
+  } else {
+    results[count] = parsed;
+  }
+  count++;
+}
+
+function processResults() {
+  return results.poets.map(poet => {
+    return {
+      poet: poet.name,
+      poems: results.poems
+        .filter(poem => poem.author === poet.name)
+        .map(poem => poem.title)
+    };
+  });
+}
+
+[`${api}/poets`, `${api}/poems`]
+  .map(getFile)
+  .reduce(
+    (chain, pr) => chain.then(() => pr).then(storeInResults),
+    Promise.resolve()
+  )
+  .then(processResults)
+  .then(console.log)
+  .catch(console.error);
+```
+
+#### Promise.all
+
+* A type of gate
+* Requires successful completion of all to complete
+
+#### Promise.race
+
+* Whichever happens first gets returned to the next `then`
+* Can be used to set a time limit
+
+### Generators
+
+### Observables
 
 ## File Module Pattern
 
