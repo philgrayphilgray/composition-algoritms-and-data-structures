@@ -944,6 +944,12 @@ function processResults() {
 * Whichever happens first gets returned to the next `then`
 * Can be used to set a time limit
 
+#### Promise Libraries
+
+* [bluebird](https://github.com/petkaantonov/bluebird)
+* [axios](https://github.com/axios/axios)
+* [asynquence](https://github.com/getify/asynquence)
+
 ### Generators
 
 ### Observables
