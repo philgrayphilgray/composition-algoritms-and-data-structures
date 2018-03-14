@@ -412,195 +412,6 @@ class Barista {
 }
 ```
 
-## Asynchronous Patterns
-
-Notes from [Rethinking Asynchronous JavaScript](https://frontendmasters.com/courses/rethinking-async-js/)
-
-### Parallel vs. Async
-
-* Parallel is expressed through threads
-* Async runs on a single thread; only one function can be running at any given time; (event loop/call stack)
-* Concurrency is two higher level tasks happening within the same timeframe
-
-### Callbacks
-
-```js
-const result = {};
-
-function reqListener() {
-  const poets = JSON.parse(this.responseText);
-  poets.forEach(poet => {
-    ajax(`${api}/poems`, function() {
-      const poems = JSON.parse(this.responseText)
-        .filter(poem => poem.author === poet.name)
-        .map(poem => poem.title);
-      result[poet.name] = poems;
-      if (Object.keys(result).length === poets.length) {
-        console.log(result);
-      }
-    });
-  });
-}
-
-ajax(`${api}/poets`, reqListener);
-```
-
-#### Parallel Request Sequencing Pattern
-
-* Each time a request is made, store a record of the request in an array; store each response in an object; loop through the requests array inside the callback for each response; if there's a call for which there isn't a response, return to exit the loop; for each call for which there is a response and the response hasn't been processed, process it and then set it to processed so that it is skipped in the next iteration.
-
-#### Deficiencies
-
-* Inversion of Control: "there's part of my program that I'm control of executing, and then there's another portion that I'm not in control of executing. The first half of my program executes now, and the second half executes in a calllback, and when I put that in a callback, that gives them control..."
-* Trust: not too early, not too late, not too many times, not too few times, no lost context, no swallowed errors
-* Not reasonable
-
-### Thunks
-
-* A pattern ontop of callbacks
-* A function that has everything it needs to do to give you a value back
-* A function with some closured state keeping track of some value(s) and gives you back those whenever you call it
-* A container wrapped around that particular collection of state that you can pass around anywhere in your program; which is the fundamental nature of a promise — a wrapper around a value
-
-#### synchronous thunk
-
-```js
-function add(x, y) {
-  return x + y;
-}
-
-var thunk = function() {
-  return add(10, 15);
-};
-
-thunk(); //25
-```
-
-#### asynchronous thunk
-
-* We don't know, nor do we have to care, whether that value is available immediately or will take a while
-* Same concept but we need to pass in a callback
-* "Thunks are promises without the fancy api"
-* A lazy thunk doesn't do the work until you call it the first time
-* An active thunk would do the work and hold onto the responses
-
-```js
-function addAsync(x, y, cb) {
-  setTimeout(function() {
-    cb(x + y);
-  }, 1000);
-}
-
-var thunk = function(cb) {
-  addAsync(10, 15, cb);
-};
-
-thunk(function(sum) {
-  sum;
-});
-```
-
-#### Thunk Request Sequencing Pattern
-
-* Assign requests to variables, with only the url argument applied
-* Call the first request, passing in a callback (for what to do with the response data)
-* Inside that callback call the second request, again passing in a callback
-* Repeat as required
-* Write the request function. Wrap the ajax method in another function that will store a later received response and a later applied callback
-* Within this request function, create state variables for the response and the callback.
-* Call the ajax method with the url and a new callback
-* Inside the ajax callback, check if the later applied request callback has been assigned to its internal variable; if yes, call it, passing in the response; otherwise, save the response to its internal variable
-* Return function that captures the later applied callback
-* Inside this function, check if the later received response has been assigned to its internal variable; if yes, call the callback with the response variable as its argumen; otherwise, save the callback to the internal callback variable
-
-```js
-// the ajax wrapper to store the callback and response until both are ready
-
-function getFile(url) {
-  let text, fn;
-
-  ajax(url, function() {
-    if (fn) fn(this.responseText);
-    else text = this.responseText;
-  });
-
-  return function(cb) {
-    if (text) cb(text);
-    else fn = cb;
-  };
-}
-
-// partiallaly applied calls to the ajax wrapper
-var th1 = getFile(`${api}/poets`);
-var th2 = getFile(`${api}/poems`);
-
-//coordinate the responses
-th1(function(response) {
-  const poets = JSON.parse(response);
-  th2(function(response2) {
-    const poems = JSON.parse(response2);
-    poets.forEach(
-      poet =>
-        (result[poet.name] = poems
-          .filter(poem => poem.author === poet.name)
-          .map(poem => poem.title))
-    );
-    console.log(result);
-  });
-});
-```
-
-### Promises
-
-* Essentially a monad (from functional programming)
-* "Promises uninvert the inversion of control"
-* A promise is like an event listener, but rather than having a "completion" event, we call that event `then`
-* A promise can either `resolve` or `reject`, those are the only two options
-* The `then` event is called whenever the promise is either resolved or rejected
-* Promises do not eliminate callbacks
-* Promises are designed to install trust into the transaction, as a kind of callback manager
-* They are resolved only once
-* Either success or error
-* messages passed/kept
-* exceptions become errors
-* immutable once resolved
-* Chaining promises: in the `then` handler for promise `a`, return promise `b`
-* Chaining is not the most important feature. There are better ways to do flow control then promise chaining.
-
-```js
-const result = {};
-
-function getFile(url) {
-  return new Promise(function(resolve, reject) {
-    ajax(url, resolve, reject);
-  });
-}
-
-var p1 = getFile(`${api}/poets`);
-var p2 = getFile(`${api}/poems`);
-
-//coordinate the responses
-
-//need to store the response of the first promise for use in the next promise
-let poets;
-
-p1
-  .then(response => {
-    poets = JSON.parse(response);
-  })
-  .then(() => p2)
-  .then(response => {
-    const poems = JSON.parse(response);
-    poets.forEach(poet => {
-      result[poet.name] = poems
-        .filter(poem => poem.author === poet.name)
-        .map(poem => poem.title);
-    });
-    console.log(result);
-  })
-  .catch(err => console.error('Error: ' + err.statusText));
-```
-
 ## Compositional Patterns
 
 Notes from reading Eric Elliott's [series on medium](https://medium.com/javascript-scene/composing-software-an-introduction-27b72500d6ea).
@@ -809,21 +620,194 @@ newBarista {
 
 ### Monads
 
-## Functional Programming Utilities
+## Asynchronous Patterns
 
-### forEach
+Notes from [Rethinking Asynchronous JavaScript](https://frontendmasters.com/courses/rethinking-async-js/)
 
-### map
+### Parallel vs. Async
 
-### filter
+* Parallel is expressed through threads
+* Async runs on a single thread; only one function can be running at any given time; (event loop/call stack)
+* Concurrency is two higher level tasks happening within the same timeframe
 
-### reduce
+### Callbacks
 
-### flip
+```js
+const result = {};
 
-### reverseArgs
+function reqListener() {
+  const poets = JSON.parse(this.responseText);
+  poets.forEach(poet => {
+    ajax(`${api}/poems`, function() {
+      const poems = JSON.parse(this.responseText)
+        .filter(poem => poem.author === poet.name)
+        .map(poem => poem.title);
+      result[poet.name] = poems;
+      if (Object.keys(result).length === poets.length) {
+        console.log(result);
+      }
+    });
+  });
+}
 
-### spreadArgs
+ajax(`${api}/poets`, reqListener);
+```
+
+#### Parallel Request Sequencing Pattern
+
+* Each time a request is made, store a record of the request in an array; store each response in an object; loop through the requests array inside the callback for each response; if there's a call for which there isn't a response, return to exit the loop; for each call for which there is a response and the response hasn't been processed, process it and then set it to processed so that it is skipped in the next iteration.
+
+#### Deficiencies
+
+* Inversion of Control: "there's part of my program that I'm control of executing, and then there's another portion that I'm not in control of executing. The first half of my program executes now, and the second half executes in a calllback, and when I put that in a callback, that gives them control..."
+* Trust: not too early, not too late, not too many times, not too few times, no lost context, no swallowed errors
+* Not reasonable
+
+### Thunks
+
+* A pattern ontop of callbacks
+* A function that has everything it needs to do to give you a value back
+* A function with some closured state keeping track of some value(s) and gives you back those whenever you call it
+* A container wrapped around that particular collection of state that you can pass around anywhere in your program; which is the fundamental nature of a promise — a wrapper around a value
+
+#### synchronous thunk
+
+```js
+function add(x, y) {
+  return x + y;
+}
+
+var thunk = function() {
+  return add(10, 15);
+};
+
+thunk(); //25
+```
+
+#### asynchronous thunk
+
+* We don't know, nor do we have to care, whether that value is available immediately or will take a while
+* Same concept but we need to pass in a callback
+* "Thunks are promises without the fancy api"
+* A lazy thunk doesn't do the work until you call it the first time
+* An active thunk would do the work and hold onto the responses
+
+```js
+function addAsync(x, y, cb) {
+  setTimeout(function() {
+    cb(x + y);
+  }, 1000);
+}
+
+var thunk = function(cb) {
+  addAsync(10, 15, cb);
+};
+
+thunk(function(sum) {
+  sum;
+});
+```
+
+#### Thunk Request Sequencing Pattern
+
+* Assign requests to variables, with only the url argument applied
+* Call the first request, passing in a callback (for what to do with the response data)
+* Inside that callback call the second request, again passing in a callback
+* Repeat as required
+* Write the request function. Wrap the ajax method in another function that will store a later received response and a later applied callback
+* Within this request function, create state variables for the response and the callback.
+* Call the ajax method with the url and a new callback
+* Inside the ajax callback, check if the later applied request callback has been assigned to its internal variable; if yes, call it, passing in the response; otherwise, save the response to its internal variable
+* Return function that captures the later applied callback
+* Inside this function, check if the later received response has been assigned to its internal variable; if yes, call the callback with the response variable as its argumen; otherwise, save the callback to the internal callback variable
+
+```js
+// the ajax wrapper to store the callback and response until both are ready
+
+function getFile(url) {
+  let text, fn;
+
+  ajax(url, function() {
+    if (fn) fn(this.responseText);
+    else text = this.responseText;
+  });
+
+  return function(cb) {
+    if (text) cb(text);
+    else fn = cb;
+  };
+}
+
+// partiallaly applied calls to the ajax wrapper
+var th1 = getFile(`${api}/poets`);
+var th2 = getFile(`${api}/poems`);
+
+//coordinate the responses
+th1(function(response) {
+  const poets = JSON.parse(response);
+  th2(function(response2) {
+    const poems = JSON.parse(response2);
+    poets.forEach(
+      poet =>
+        (result[poet.name] = poems
+          .filter(poem => poem.author === poet.name)
+          .map(poem => poem.title))
+    );
+    console.log(result);
+  });
+});
+```
+
+### Promises
+
+* Essentially a monad (from functional programming)
+* "Promises uninvert the inversion of control"
+* A promise is like an event listener, but rather than having a "completion" event, we call that event `then`
+* A promise can either `resolve` or `reject`, those are the only two options
+* The `then` event is called whenever the promise is either resolved or rejected
+* Promises do not eliminate callbacks
+* Promises are designed to install trust into the transaction, as a kind of callback manager
+* They are resolved only once
+* Either success or error
+* messages passed/kept
+* exceptions become errors
+* immutable once resolved
+* Chaining promises: in the `then` handler for promise `a`, return promise `b`
+* Chaining is not the most important feature. There are better ways to do flow control then promise chaining.
+
+```js
+const result = {};
+
+function getFile(url) {
+  return new Promise(function(resolve, reject) {
+    ajax(url, resolve, reject);
+  });
+}
+
+var p1 = getFile(`${api}/poets`);
+var p2 = getFile(`${api}/poems`);
+
+//coordinate the responses
+
+//need to store the response of the first promise for use in the next promise
+let poets;
+
+p1
+  .then(response => {
+    poets = JSON.parse(response);
+  })
+  .then(() => p2)
+  .then(response => {
+    const poems = JSON.parse(response);
+    poets.forEach(poet => {
+      result[poet.name] = poems
+        .filter(poem => poem.author === poet.name)
+        .map(poem => poem.title);
+    });
+    console.log(result);
+  })
+  .catch(err => console.error('Error: ' + err.statusText));
+```
 
 ## File Module Pattern
 
@@ -937,6 +921,22 @@ import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL, AUTH_LOGOUT } from "./actionTypes"
 
 AUTH_START; // "AUTH_START"
 ```
+
+## Functional Programming Utilities
+
+### forEach
+
+### map
+
+### filter
+
+### reduce
+
+### flip
+
+### reverseArgs
+
+### spreadArgs
 
 ## Data Structures
 
@@ -1071,7 +1071,3 @@ Part II on [Front End Masters](https://btholt.github.io/four-semesters-of-cs-par
 
 * finds the shortest path between point A and point B
 * use breadth-first traversal
-
-```
-
-```
