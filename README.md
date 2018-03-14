@@ -737,15 +737,14 @@ export const AUTH_LOGOUT = "AUTH_LOGOUT";
 
 
 // auth.js
-import * as actionTypes from './actionTypes";
+import * as actionTypes from "./actionTypes";
 
 actionTypes.AUTH_START; // "AUTH_START"
-
 
 /** Destructured import example **/
 
 // auth.js
-import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL, AUTH_LOGOUT } from './actionTypes";
+import { AUTH_START, AUTH_SUCCESS, AUTH_FAIL, AUTH_LOGOUT } from "./actionTypes";
 
 AUTH_START; // "AUTH_START"
 ```
