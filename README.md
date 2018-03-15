@@ -8,7 +8,6 @@
   * [Factory Functions with Mixins or Objects Linked as Other Objects using Object.create](#factory-functions-with-mixins-or-objects-linked-as-other-objects-using-objectcreate)
   * [Classes](#classes)
 * [Compositional Patterns](#compositional-patterns)
-  * [Reduce](#reduce)
   * [Curry](#curry)
   * [Compose](#compose)
   * [Pipe](#pipe)
@@ -28,9 +27,14 @@
   * [Promises](#promises)
     * [Promise.all](#promiseall)
     * [Promise.race](#promiserace)
+    * [Promise Libraries](#promise-libraries)
   * [Generators](#generators)
+    * [Generators + Promises](#generators--promises)
   * [Observables](#observables)
-* [File Module Pattern](#file-module-pattern)
+    * [RxJS methods](#rxjs-methods)
+  * [CSP: Communicating Sequential Processes](#csp-communicating-sequential-processes)
+    * [CSP with Utility Library](#csp-with-utility-library)
+* [File Module Patterns](#file-module-patterns)
   * [CommonJS Modules](#commonjs-modules)
   * [AMD](#amd)
   * [ES6 Imports](#es6-imports)
@@ -45,6 +49,7 @@
 * [Data Structures](#data-structures)
   * [Stacks](#stacks)
   * [Queues](#queues)
+  * [Sets](#sets)
   * [Trees](#trees)
   * [Linked Lists](#linked-lists)
   * [Binary Search Trees](#binary-search-trees)
@@ -487,8 +492,6 @@ class Barista {
 ## Compositional Patterns
 
 Notes from reading Eric Elliott's [series on medium](https://medium.com/javascript-scene/composing-software-an-introduction-27b72500d6ea).
-
-### Reduce
 
 ### Curry
 
@@ -952,9 +955,220 @@ function processResults() {
 
 ### Generators
 
+* All normal functions run to completion
+* Generators do not have a run to completion semantic
+* Designed as a syntactic form of declaring a state machine
+* State machine: patterned series of flow from one state to another state to another state and declaritively listing all those states and those transitions out
+* It's a lot of work to implement a state machine
+* A function that can pause and resume as many times as necessary
+* When it is paused, it only blocks locally, inside of the generator; the encapsulating program can continue as normal
+
+```js
+// basic example
+
+function* gen() {
+  console.log('hello');
+  yield;
+  console.log('world');
+}
+
+var it = gen();
+it.next(); // Hello
+it.next(); // World
+```
+
+* Executing a generator does not actually run any of its code; instead it produces an iterator
+* Iterators are a patterned way of stepping through a set of data
+* In the generator, the purpose of the iterator is to step through the control of our generator from the outside
+* We can also call yield a value:
+
+```js
+function* main() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+var it = main();
+
+it.next(); // { value: 1, done: false }
+it.next(); // { value: 2, done: false }
+it.next(); // { value: 3, done: false }
+it.next(); // { value: undefined, done: true }
+```
+
+* When you do a return from a generator, you immediately complete the generator and whatever you return is sent out as the value; but if you do a yield, the value is sent out and `done` is false
+* `for...of` loop will run an iterator to completion, including a generator, and will automatically look for `done`
+* `yield` can pass messages out of the generator, and we can pass messages back into the generator with `next`
+* We can write synchronous looking asynchronous code with generators; we factor out the asynchronicity itself as an implementation detail that we don't need to worry about
+* Our error handling also becomes synchronous again, using `try...catch`
+
+#### Generators + Promises
+
+* Generators alone are still susceptible to callback hell via inversion of control
+* yield a promise; when the promise resolves, resume the generator
+* You can write a utility to handle this, but all the major libraries have one
+* `async...await` is the new built-in syntactic version of this utility
+* We are still working with promises; we can still use `Promise.all` and `Promise.race`
+
+TODO: include explanation/example of `coroutine()`
+
+```js
+// generator + promise example, using a utility library
+const Promise = require('bluebird');
+
+function getFile(url) {
+  return new Promise(function(resolve, reject) {
+    ajax(url, resolve, reject);
+  });
+}
+
+const getPoetsAndPoems = Promise.coroutine(function* main(poetsUrl, poemsUrl) {
+  try {
+    const poets = yield getFile(poetsUrl);
+    const poems = yield getFile(poemsUrl);
+    const result = JSON.parse(poets).map(poet => {
+      return {
+        poet: poet.name,
+        poems: JSON.parse(poems)
+          .filter(poem => poem.author === poet.name)
+          .map(poem => poem.title)
+      };
+    });
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+const poetsUrl = `${api}/poets`;
+const poemsUrl = `${api}/poems`;
+
+getPoetsAndPoems(poetsUrl, poemsUrl);
+```
+
+```js
+// `async..await` example
+function getFile(url) {
+  return new Promise(function(resolve, reject) {
+    ajax(url, resolve, reject);
+  });
+}
+
+async function getPoetsAndPoems(poetsUrl, poemsUrl) {
+  try {
+    const poets = await getFile(poetsUrl);
+    const poems = await getFile(poemsUrl);
+    const result = JSON.parse(poets).map(poet => {
+      return {
+        poet: poet.name,
+        poems: JSON.parse(poems)
+          .filter(poem => poem.author === poet.name)
+          .map(poem => poem.title)
+      };
+    });
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const poetsUrl = `${api}/poets`;
+const poemsUrl = `${api}/poems`;
+
+getPoetsAndPoems(poetsUrl, poemsUrl);
+```
+
 ### Observables
 
-## File Module Pattern
+* Like a chain of calculated fields in a spreadsheet; a change has to follow a series of steps to update all the fields
+* "An observable is an adapter hooked onto an event source that produces a promise every time a new event comes through"
+* An observable represents the data source, and you can subscribe to that observable in one or more other locations in a separate way
+* You can think of an event stream as a never-ending array; we can map over an event stream; everytime a piece of data comes in, we can perform a transformation on it
+* "If you think about observables as streams, we can define certain operations for composing streams together."
+* Observables are for adapting event streams and modelling data flow in a declarative fashion; don't reach for a promise, callback, thunk, or generator for this; use an observable
+* Use a library, like [RxJS](http://reactivex.io/rxjs/)
+
+```js
+// RxJS example from getify
+
+const obsv = Rx.Observable.fromEvent(btn, 'click');
+
+obsv
+  .map(event => event.target.className)
+  .filter(className => /foobar/.test(className))
+  .distinctUntilChanged()
+  .subscribe(data => {
+    const className = data[1];
+    console.log(className);
+  });
+```
+
+#### RxJS methods
+
+* `distinctUntilChanged()`: The first time a piece of data comes through, let it go through; but if the same one comes again, don't let it come through; and if something new comes along, let it go through.
+* `subscribe`: synchronous; usually at the end of the chain
+* Learn RsJX methods/concepts visually: [RxMarbles](http://rxmarbles.com/)
+* `zip`: Fires whenever there's an event from all streams
+* `merge`: Fires whenever there's an event from any of the streams
+
+### CSP: Communicating Sequential Processes
+
+* Modelling concurrency with channels
+* A channel is like a stream or pipe, but it has no buffer size; there's a notion of backpressure
+* Backpressure is a reverse way of communicating up from consumer to producer to say stop producing because I don't want anymore
+* We can use a chanel to model that signal; it can only take one message at a time; you can't send me something until I'm ready to take it; and I can't take something until you're ready to send it
+* There's no queue
+* CSP is synchronous message passing
+* Can use it to coordinate two independent generators
+* Can model every separate piece of the application independently from each other
+* Used in Go and ClojureScript
+* Very similar to observables; the main difference is backpressure; we don't have to covert from hot to cold, etc.
+
+```js
+// simple example from getify
+
+const ch = chan();
+
+function* process1() {
+  yield put(ch, 'Hello');
+  const msg = yield take(ch);
+  console.log(msg);
+}
+
+function* process2() {
+  const greeting = yield take(ch);
+  yield put(ch, greeting + ' World');
+  console.log('done!');
+}
+```
+
+#### CSP with Utility Library
+
+* [JS-CSP](https://github.com/ubolonton/js-csp)
+* `while(true)` loop allows the processes to run forever, independently
+* This particular library assumes global variables
+* `alts` lets you define a list of multiple channels and do some action from the first one that is unblocked
+
+```js
+// sampled stream example from getify
+
+csp.go(function*() {
+  while (true) {
+    yield csp.put(ch, Math.random());
+  }
+});
+
+csp.go(function*() {
+  while (true) {
+    yield csp.take(csp.timeout(500));
+    const num = yield csp.take(ch);
+    console.log(num);
+  }
+});
+```
+
+## File Module Patterns
 
 ### CommonJS Modules
 
@@ -1099,6 +1313,8 @@ AUTH_START; // "AUTH_START"
 * A data container with 2 required methods: `enqueue()` and `dequeue`, functionally equivelent to Array.prototype methods `push()` and `shift()`, respectively.
 * 2 optional methods: `peek()` and `size()`.
 * Use a counter to keep track of the first and last index.
+
+### Sets
 
 ### Trees
 
