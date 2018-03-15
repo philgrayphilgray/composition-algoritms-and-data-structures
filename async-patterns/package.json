@@ -1,0 +1,16 @@
+{
+  "name": "async-patterns",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "json-server": "^0.12.1",
+    "xmlhttprequest": "^1.8.0"
+  }
+}

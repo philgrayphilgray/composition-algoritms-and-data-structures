@@ -1,0 +1,63 @@
+{
+  "poems": [
+    {
+      "id": 0,
+      "title": "Not at Home to Callers",
+      "author": "Emily Dickinson",
+      "rating": 5
+    },
+    {
+      "id": 1,
+      "title": "Evening Star",
+      "author": "Edgar Allan Poe",
+      "rating": 6
+    },
+    {
+      "id": 2,
+      "title": "Song of the Open Road.",
+      "author": "Walt Whitman",
+      "rating": 4
+    },
+    {
+      "id": 3,
+      "title": "Longings for Home.",
+      "author": "Walt Whitman",
+      "rating": 8
+    },
+    {
+      "id": 4,
+      "title": "Summer begins to have the look",
+      "author": "Emily Dickinson",
+      "rating": 8
+    },
+    {
+      "id": 5,
+      "title": "Bridal Ballad",
+      "author": "Edgar Allan Poe",
+      "rating": 5
+    },
+    {
+      "id": 6,
+      "title": "Warble for Lilac-Time.",
+      "author": "Walt Whitman",
+      "rating": 4
+    },
+    {
+      "id": 7,
+      "title": "Or from that Sea of Time.",
+      "author": "Walt Whitman",
+      "rating": 3
+    },
+    {
+      "id": 8,
+      "title": "Than Heaven more remote,",
+      "author": "Emily Dickinson",
+      "rating": 7
+    }
+  ],
+  "poets": [
+    { "id": 0, "name": "Edgar Allan Poe" },
+    { "id": 1, "name": "Emily Dickinson" },
+    { "id": 2, "name": "Walt Whitman" }
+  ]
+}
